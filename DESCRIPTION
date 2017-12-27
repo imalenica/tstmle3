@@ -1,33 +1,24 @@
 Package: tstmle
-Title: Targeted Maximum Likelihood Estimation of Causal Effects of Interventions
-    on Single Time Series
+Title: Data-adaptive Targeted Maximum Likelihood Estimation of Causal Effects of Interventions on Single Time Series
 Version: 0.0.1
 Authors@R: c(
     person("Ivana", "Malenica", email = "imalenica@berkeley.edu",
            role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-7404-8088")),
     person("Mark", "van der Laan", email = "laan@berkeley.edu",
            role = "aut")       
-    person("Jonathan", "Levy", email = "jlstiles@berkeley.edu",
-           role = "ctb"),
-    person("Chris", "Kennedy", email = "ck37@berkeley.edu",
-           role = "ctb"),
-    person("Nima", "Hejazi", email = "nhejazi@berkeley.edu",
-           role = "ctb", comment = c(ORCID = "0000-0002-7127-2789"))
   )
-Description: Estimation and Inference for Causal Effects with Single Time Series.
+Description: This package provides data-adaptive estimation and inference using Targeted Maximum Likelihood Estimation (TMLE) in order to assess the causal effect of interventions on a single time-series. In particular, it implements two target parameters of the conditional distribution, indexed by the fixed-dimensional summary measure of the past up until the time point of interest.
 Depends: R (>= 3.2.0)
 Imports:
     stats,
-    stringr,
-    condensier,
     sl3
 Suggests:
     testthat,
     knitr,
     rmarkdown
 Remotes:
-    github::osofr/condensier,
     github::jeremyrcoyle/sl3
+    github::jeremyrcoyle/tmle3
 License: MIT + file LICENSE
 URL: https://github.com/podTockom/tstmle
 BugReports: https://github.com/podTockom/tstmle/issues

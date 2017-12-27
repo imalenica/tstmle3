@@ -21,26 +21,22 @@ knitr::opts_chunk$set(
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-> Estimation and Inference for Causal Effects with Single Time Series
+> Data-adaptive Estimation and Inference for Causal Effects with Single Time Series
 
-__Authors:__ Ivana Malenica
+__Authors:__ [Ivana Malenica](https://github.com/podTockom)
 
 ## What's `tstmle`?
 
-The `tstmle` package implements targeted maximum likelihood estimation of causal
-effects based on the observation of a single time series (i.e., interrupted time
-series analysis). The approach considers the case where at each time point in a
-time series, a covariate vector, treatment, and outcome are observed in
-chronological order. A family of causal effects are defined as the impacts of
-stochastic interventions on a subset of the treatment nodes on a future outcome.
-This general formulation of the statistical estimation problem subsumes many
-other important estimation problems, including but not limited to classical time
-series models, group sequential adaptive designs, and even independent and
-identically distributed data where the summary measure of the past is simply the
-empty set. For details on the theoretical underpinnings of the approach, the
-interested reader may consider consulting @vdl2017online. For a general
-introduction to the targeted learning methodology and statistical causal
-inference, please consult @vdl2011targeted and @vdl2017targeted.
+The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of different causal
+effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables $O(1), \dots O(n)$, where each $O(t)$ with $t \in \{1, \dots n\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the covariate vector $W(t)$, treatment or exposure $A(t)$, and outcome $Y(t)$. 
+
+The `tstmle` package focuses on estimation of target parameters of the conditional distribution of $O(t)$ given $C_{o(t)}$, where $C_{o(t)}$ is some fixed-dimensional summary function of the past $O(t-1), \dots O(1)$ [@c2] In particular, `tstmle` provides estimation and inference for the following:
+
+- data-dependent, $C_{o(t)}-$ specific, causal effect within a single time series
+
+- adaptive design for learning the optimal treatment rule within a single time series
+
+Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data [@c3].
 
 ---
 
@@ -86,7 +82,7 @@ intervention on a single time series, consider the following example:
 
 ## License
 
-&copy; 2017 [Ivana Malenica](https://github.com/podTockom)
+&copy; 2018 [Ivana Malenica](https://github.com/podTockom)
 
 The contents of this repository are distributed under the MIT license. See
 below for details:

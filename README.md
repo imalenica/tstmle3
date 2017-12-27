@@ -3,16 +3,22 @@
 R/`tstmle`
 ==========
 
-[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/tstmle/master.svg)](https://codecov.io/github/podTockom/tstmle?branch=master) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-
-> Estimation and Inference for Causal Effects with Single Time Series
+> Data-adaptive Estimation and Inference for Causal Effects with Single Time Series
 
 **Authors:** Ivana Malenica
 
 What's `tstmle`?
 ----------------
 
-The `tstmle` package implements targeted maximum likelihood estimation of causal effects based on the observation of a single time series (i.e., interrupted time series analysis). The approach considers the case where at each time point in a time series, a covariate vector, treatment, and outcome are observed in chronological order. A family of causal effects are defined as the impacts of stochastic interventions on a subset of the treatment nodes on a future outcome. This general formulation of the statistical estimation problem subsumes many other important estimation problems, including but not limited to classical time series models, group sequential adaptive designs, and even independent and identically distributed data where the summary measure of the past is simply the empty set. For details on the theoretical underpinnings of the approach, the interested reader may consider consulting van der Laan (2017). For a general introduction to the targeted learning methodology and statistical causal inference, please consult van der Laan and Rose (2011) and van der Laan and Rose (2017).
+The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of different causal effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables *O*(1),…*O*(*n*), where each *O*(*t*) with *t* ∈ {1, …*n*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the covariate vector *W*(*t*), treatment or exposure *A*(*t*), and outcome *Y*(*t*).
+
+The `tstmle` package focuses on estimation of target parameters of the conditional distribution of *O*(*t*) given *C*<sub>*o*(*t*)</sub>, where *C*<sub>*o*(*t*)</sub> is some fixed-dimensional summary function of the past *O*(*t* − 1),…*O*(1) (van der Laan and Malenica 2018) In particular, `tstmle` provides estimation and inference for the following:
+
+-   data-dependent, *C*<sub>*o*(*t*)</sub>− specific, causal effect within a single time series
+
+-   adaptive design for learning the optimal treatment rule within a single time series
+
+Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data (Malenica and van der Laan 2018).
 
 ------------------------------------------------------------------------
 
@@ -91,8 +97,6 @@ The contents of this repository are distributed under the MIT license. See below
 References
 ----------
 
-van der Laan, Mark J. 2017. “Online Targeted Maximum Likelihood Estimation of Causal Effects Based on Observing a Single Time Series.” In *Targeted Learning in Data Science: Causal Inference for Complex Longitudinal Studies*, 263–97. Springer Science & Business Media.
+Malenica, Ivana, and Mark J van der Laan. 2018. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
 
-van der Laan, Mark J, and Sherri Rose. 2011. *Targeted Learning: Causal Inference for Observational and Experimental Data*. Springer Science & Business Media.
-
-———. 2017. *Targeted Learning in Data Science: Causal Inference for Complex Longitudinal Studies*. Springer Science & Business Media.
+van der Laan, Mark J, and Ivana Malenica. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”
