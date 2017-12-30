@@ -49,6 +49,13 @@ You can install a stable release of `tstmle` from GitHub via
 devtools::install_github("podTockom/tstmle")
 ```
 
+Note that in order to run `tstmle` you will also need `sl3` and `tmle3`:
+
+```{r gh-installation, eval = FALSE}
+devtools::install_github("jeremyrcoyle/sl3")
+devtools::install_github("jeremyrcoyle/tmle3")
+```
+
 <!--
 
 In the future, the package will be available from

@@ -7,11 +7,13 @@ Authors@R: c(
     person("Mark", "van der Laan", email = "laan@berkeley.edu",
            role = "aut")       
   )
+Maintainer: Ivana Malenica <imalenica@berkeley.edu>  
 Description: This package provides data-adaptive estimation and inference using Targeted Maximum Likelihood Estimation (TMLE) in order to assess the causal effect of interventions on a single time-series. In particular, it implements two target parameters of the conditional distribution, indexed by the fixed-dimensional summary measure of the past up until the time point of interest.
 Depends: R (>= 3.2.0)
 Imports:
     stats,
-    sl3
+    sl3,
+    Hmisc
 Suggests:
     testthat,
     knitr,
