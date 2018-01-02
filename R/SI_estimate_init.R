@@ -7,34 +7,44 @@
 #' @param Y data.frame object containing the outcome variable.
 #' @param X data.frame object containing the relevant covariates.
 #' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
-#' In case it is not specified, it will defined internally.
-#' @param fold_fn cross-validation scheme, as defined by \code{origami}. See \code{origami::fold_funs}
-#' for detailed explanations. For time-series, implemented cross-validation schemes are
-#' \code{folds_rolling_origin} and \code{folds_rolling_window}.
-#' @param SL.library list of \code{sl3} algorithms to be used for estimation. For the list of available
-#' learners for time-series, see \code{sl3::sl3_list_learners(c("timeseries"))}.
+#' @param SL.library list of \code{sl3} algorithms to be used for estimation.
 #'
 #'
 #' @return An object of class \code{tstmle}.
 #' \describe{
-#' \item{fitW}{Fit object for W part of the likelihood.}
+#' \item{cvRisk}{CV Risk for each algorithm and Super Learner.}
+#' \item{valY}{Prediction based on the estimated SL fit.}
+#' \item{SL.library}{list of \code{sl3} algorithms to be used for estimation.}
+#' \item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
+#' \item{fullFit}{Fit on all samples.}
+#' \item{ccvFit}{CV fit.}
 #' }
 #'
-#' @importFrom origami make.folds
+#' @importFrom sl3 make_sl3_Task
 #'
 #' @export
 #
 
-initEst <- function(Y, X ) {
+initEst <- function(Y, X, folds=NULL,SL.library) {
 
+  covars<-names(X)
+  outcome<-names(Y)
+  data<-cbind.data.frame(Y,X)
 
+  #Create sl3 task:
+  #TO DO: add option for weights
+  task <- sl3::make_sl3_Task(data, covariates = covars, outcome = outcome,
+                             outcome_type=NULL, folds=folds)
 
+  #Return sl3 trained object:
+  sl3_fit<-sl3.fit(task=task,SL.library=SL.library)
 
+  out <- list(cvRisk = sl3_fit$risk, valY = sl3_fit$pred, SL.library = SL.library, folds = folds,
+              fullFit = sl3_fit$sl.fit, cvFit=sl3_fit$cv.fit)
 
+  class(out) <- c("initEst", "sl3")
 
-
-
-
+  return(out)
 
 }
 
@@ -65,8 +75,7 @@ initFrame <- function(data, Cy, Ca){
 
   # How many in a batch:
   step <- length(grep("_1$", row.names(data), value = TRUE))
-
-  names<-row.names(data)
+  name<-row.names(data)
 
   # Lag past
   res_y <- lapply(seq_len(Cy), function(x) {
@@ -109,8 +118,57 @@ initFrame <- function(data, Cy, Ca){
 
   }
 
+  names(Y)[2:ncol(Y)]<-name[Cy:1]
+  names(Y)[1:2]<-c("Y","A")
+
+  names(A)[2:ncol(A)]<-name[Ca:1]
+  names(A)[1]<-c("A")
+
+  row.names(Y)<-NULL
+  row.names(A)<-NULL
+
   out <- list(Y = Y, A = A, Cy=Cy, Ca=Ca, data=data)
   return(out)
 
 }
 
+#' Fit Q with specified exposure
+#'
+#' Function to make estimation of Q with specified exposure easier.
+#'
+#' @param data data.frame object containing the time series with relevant time ordering.
+#' @param fit fit object from \code{initEst}.
+#' @param setA specify the value each A node should be set to.
+#'
+#' @return An object of class \code{tstmle}.
+#' \describe{
+#' \item{valY}{Prediction based on the input \code{fit} object.}
+#' }
+#'
+#' @importFrom sl3 make_sl3_Task
+#'
+#' @export
+#'
+
+initEst_setA<-function(data, fit, setA){
+
+  data_setA<-data
+
+  #Set A node to specified intervention:
+  data_setA[,"A"] = setA
+
+  covars<-names(data_setA[,-1])
+  outcome<-names(data_setA[,1])
+
+  #Create sl3 task:
+  #TO DO: add option for weights
+  task_setA <- sl3::make_sl3_Task(data_setA, covariates = covars, outcome = outcome,
+                                  outcome_type=NULL, folds=fit$folds)
+
+  sl_preds <- fit$fullFit$predict(task_setA)
+
+  out <- list(valY = sl_preds)
+
+  return(out)
+
+}
