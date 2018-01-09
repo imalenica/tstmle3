@@ -9,7 +9,8 @@ tstmleSI(data, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
   "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
   "Lrnr_glmnet"), Q_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
   "Lrnr_expSmooth"), g_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
-  "Lrnr_expSmooth"))
+  "Lrnr_expSmooth"), gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 -
+  1e-04), tol = 10^-3, maxIter = 1000)
 }
 \arguments{
 \item{data}{data.frame object containing the time series with relevant time ordering.}
@@ -32,24 +33,28 @@ In case it is not specified, it will defined internally.}
 \item{Q_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of E(Y|A,Cy) (Q).
 For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.}
 
+\item{gbounds}{bounds for the q estimates.}
+
+\item{Qbounds}{bounds for the Q estimates.}
+
+\item{tol}{tolerance parameter for the iterative TMLE.}
+
+\item{maxIter}{maximum number of iterations for the iterative TMLE.}
+
 \item{q_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
 For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.}
-
-\item{fold_fn}{cross-validation scheme, as defined by \code{origami}. See \code{?origami::fold_funs}
-for detailed explanations. For time-series, implemented cross-validation schemes are
-\code{folds_rolling_origin} and \code{folds_rolling_window}.}
-
-\item{window}{in case \code{fold_fn} was set to \code{folds_rolling_window}, specify the
-number of observations in each training sample.}
-
-\item{skip}{in case the time-series considered is very long, it is possible there will be many
-folds to consider. This parameter allows for few nodes to be skipped. Default is 0, which
-corresonds to no nodes skipped.}
 }
 \value{
 An object of class \code{tstmle}.
 \describe{
-\item{fitW}{Fit object for W part of the likelihood.}
+\item{tmlePsi}{Average treatment effect estimated using TMLE.}
+\item{iptwPsi}{Average treatment effect estimated using IPTW.}
+\item{tmleSD}{Standard deviation for the TMLE estimated parameter.}
+\item{tmleCI}{Confidence Interval for the TMLE estimated parameter.}
+\item{IC}{Influence function.}
+\item{steps}{Number of steps until convergence of the iterative TMLE.}
+\item{initialData}{Initial estimates of g, Q.}
+\item{tmleData}{Final updates estimates of g, Q and clever covariates.}
 }
 }
 \description{

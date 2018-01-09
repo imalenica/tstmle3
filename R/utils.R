@@ -65,3 +65,18 @@ sl3.fit<-function(task,SL.library){
   return(list(pred=sl_preds, risk=risk, coefs=sl_fit$coefficients, sl=sl,
               sl.fit=sl_fit, cv.fit=cv_fit))
 }
+
+#' Bounds for Q and g
+#'
+#' Function to bound Q and g estimates
+#'
+#' @param learner_list list of algorithms, possibly with additional parameters.
+#'
+#
+
+bound <- function(x, bds){
+  x[x > max(bds)] <- max(bds)
+  x[x < min(bds)] <- min(bds)
+  x
+}
+
