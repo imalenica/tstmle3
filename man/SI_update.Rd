@@ -4,9 +4,11 @@
 \alias{SI_update}
 \title{Update function}
 \usage{
-SI_update(tmledata)
+SI_update(data, Qbounds)
 }
 \arguments{
+\item{Qbounds}{bounds for the Q estimates.}
+
 \item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
 estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
 }

@@ -172,3 +172,4 @@ initEst_setA<-function(data, fit, setA){
   return(out)
 
 }
+

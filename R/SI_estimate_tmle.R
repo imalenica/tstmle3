@@ -5,9 +5,7 @@
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
 #' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
-#' @param tol tolerance parameter for the iterative TMLE.
 #' @param maxIter maximum number of iterations for the iterative TMLE.
-#' @param gbounds bounds for the q estimates.
 #' @param Qbounds bounds for the Q estimates.
 #'
 #' @return An object of class \code{tstmle}.
@@ -23,23 +21,16 @@
 #' @export
 #
 
-tmleSI <- function(tmledata, tol=10^-3, maxIter=1000,
-                   gbounds=gbounds, Qbounds=Qbounds){
-
-  #Iterative TMLE for context-specific ATE
-  iter <- 0
-  epsilon <- Inf
+tmleSI <- function(tmledata, maxIter=1000, Qbounds=c(1e-4,1-1e-4)){
 
   order <- 1/nrow(tmledata)
 
   #Initial estimate:
   eststep <- SI_estimate(tmledata)
 
-  while(iter <= maxIter & (abs(epsilon) > tol)){
+  for (iter in seq_len(maxIter)){
 
-    iter <- iter + 1
-
-    updatestep <- SI_update(eststep$tmledata)
+    updatestep <- SI_update(eststep$tmledata, Qbounds)
     eststep <- SI_estimate(updatestep$tmledata)
 
     ED <- sapply(eststep$Dstar, mean)
@@ -68,7 +59,6 @@ tmleSI <- function(tmledata, tol=10^-3, maxIter=1000,
 #' @importFrom stats glm
 #'
 
-
 fluctuate <- function(tmledata, flucmod, subset = seq_len(nrow(tmledata))) {
   suppressWarnings({
     fluc <- stats::glm(flucmod, data = tmledata[subset, ], family = "binomial")
@@ -82,26 +72,27 @@ fluctuate <- function(tmledata, flucmod, subset = seq_len(nrow(tmledata))) {
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
 #' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
+#' @param Qbounds bounds for the Q estimates.
 #'
 #' @importFrom stats plogis qlogis
 #'
 
-SI_update <- function(tmledata) {
+SI_update <- function(data, Qbounds) {
 
-  subset <- with(tmledata, which(0 < Qk & Qk < 1))
+  subset <- with(data, which(0 < Qk & Qk < 1))
   eps <- 0
 
   if (length(subset) > 0) {
     #fluctuate Q
-    tmledata$Qktrunc <- bound(with(tmledata, Qk), Qbounds)
-    qfluc <- fluctuate(tmledata, Y ~ -1 + HA + stats::offset(stats::qlogis(Qktrunc)))
+    data$Qktrunc <- bound(with(data, Qk), Qbounds)
+    qfluc <- fluctuate(data, Y ~ -1 + offset(stats::qlogis(Qktrunc)) + HA)
     eps <- qfluc$eps
-    tmledata$Qk <- with(tmledata, stats::plogis(stats::qlogis(Qktrunc) + HA * eps))
-    tmledata$Q1k <- with(tmledata, stats::plogis(stats::qlogis(Q1k) + H1 * eps))
-    tmledata$Q0k <- with(tmledata, stats::plogis(stats::qlogis(Q0k) + H0 * eps))
+    data$Qk <- with(data, stats::plogis(stats::qlogis(Qktrunc) + HA * eps))
+    data$Q1k <- with(data, stats::plogis(stats::qlogis(Q1k) + H1 * eps))
+    data$Q0k <- with(data, stats::plogis(stats::qlogis(Q0k) + H0 * eps))
   }
 
-  list(tmledata = tmledata, coefs = c(eps))
+  list(tmledata = data, coefs = c(eps))
 
 }
 

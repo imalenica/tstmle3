@@ -4,18 +4,13 @@
 \alias{tmleSI}
 \title{Main TMLE Calculations for the Single Intervention Context-Specific ATE Paramater}
 \usage{
-tmleSI(tmledata, tol = 10^-3, maxIter = 1000, gbounds = gbounds,
-  Qbounds = Qbounds)
+tmleSI(tmledata, maxIter = 1000, Qbounds = c(1e-04, 1 - 1e-04))
 }
 \arguments{
 \item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
 estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
 
-\item{tol}{tolerance parameter for the iterative TMLE.}
-
 \item{maxIter}{maximum number of iterations for the iterative TMLE.}
-
-\item{gbounds}{bounds for the q estimates.}
 
 \item{Qbounds}{bounds for the Q estimates.}
 }
