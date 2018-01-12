@@ -173,3 +173,94 @@ initEst_setA<-function(data, fit, setA){
 
 }
 
+#' Split-specific predictions
+#'
+#' Function to estimate split-specific predictions for Q and g, and relevant parts for the
+#' optimal treatment regime.
+#'
+#' @param fold one of the folds from the folds object.
+#' @param data data.frame object containing the time series with relevant time ordering.
+#' @param estQ object of class \code{initEst} with \code{sl3} results for Q.
+#' @param estg object of class \code{initEst} with \code{sl3} results for g.
+#'
+#' @return An object of class \code{tstmle}.
+#' \describe{
+#' \item{QAW}{Split-specific prediction of Q.}
+#' \item{Q1W}{Split-specific prediction of Q(1,W).}
+#' \item{Q0W}{Split-specific prediction of Q(0,W).}
+#' \item{pA1}{Split-specific prediction of g.}
+#' \item{B}{Split-specific prediction of the blip.}
+#' \item{Rule}{Split-specific prediction of the maximizing rule.}
+#' \item{K}{Split-specific absolute value of the blip.}
+#' }
+#'
+#' @importFrom sl3 make_sl3_Task
+#'
+#' @export
+#'
+
+cv_split <- function(fold, data, estQ, estg){
+
+  #Get fold index
+  v <- fold_index()
+
+  #Get the coefficients:
+  coef<-estQ$fullFit$coefficients
+  coefg<-estg$fullFit$coefficients
+
+  #Get split-specific fits:
+  splitQ <- estQ$cvFit[[v]]
+  splitg <- estg$cvFit[[v]]
+
+  #Predict on all the data:
+  new_folds<-make_folds(data, fold_fun = folds_resubstitution)[[1]]
+
+  #QAW
+  covars<-names(data[,-1])
+  outcome<-names(data[,1])
+
+  task<-sl3::make_sl3_Task(data, covariates = covars, outcome = outcome,
+                           outcome_type=NULL, folds=new_folds)
+  QAW <- as.matrix(splitQ$predict(task)) %*% as.matrix(coef)
+
+  #Q1W:
+  new_data<-data
+  new_data[,"A"] = 1
+
+  task<-sl3::make_sl3_Task(new_data, covariates = covars, outcome = outcome,
+                           outcome_type=NULL, folds=new_folds)
+  Q1W <- as.matrix(splitQ$predict(task)) %*% as.matrix(coef)
+
+  #Q0W:
+  new_data<-data
+  new_data[,"A"] = 0
+
+  task<-sl3::make_sl3_Task(new_data, covariates = covars, outcome = outcome,
+                           outcome_type=NULL, folds=new_folds)
+  Q0W <- as.matrix(splitQ$predict(task)) %*% as.matrix(coef)
+
+  #p1A:
+  covars<-names(data[,c(-1,-2)])
+  outcome<-names(data[,2])
+
+  task<-sl3::make_sl3_Task(data, covariates = covars, outcome = outcome,
+                           outcome_type=NULL, folds=new_folds)
+  pA1 <- as.matrix(splitg$predict(task)) %*% as.matrix(coefg)
+
+  #Blip
+  A<-data$A
+  Y<-data$Y
+
+  B <- (A/pA1 - (1 - A)/(1 - pA1)) * (Y - QAW) + Q1W - Q0W
+
+  #Maximize:
+  Rule <- as.numeric(B > 0)
+
+  K <- as.vector(abs(B))
+
+  return(list(QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
+
+}
+
+
+

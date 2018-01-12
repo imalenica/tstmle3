@@ -72,6 +72,13 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
   estg$valY<-bound(estg$valY, gbounds)
 
   #Split-specific predictions:
+  message("Generating split-specific predictions")
+  estSplit <- cross_validate(cv_split, folds, Q, estQ, estg)
+
+
+
+
+
 
 
 
