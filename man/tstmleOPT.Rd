@@ -7,8 +7,9 @@
 tstmleOPT(data, Co = TRUE, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
   stratifyAY = TRUE, Q_library = list("Lrnr_mean", "Lrnr_glm_fast",
   "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 -
-  1e-04), maxIter = 1000)
+  "Lrnr_glmnet"), blip_library = list("Lrnr_mean", "Lrnr_glm_fast",
+  "Lrnr_glmnet", "Lrnr_randomForest", "Lrnr_xgboost"), gbounds = c(1e-04, 1 -
+  1e-04), Qbounds = c(1e-04, 1 - 1e-04), maxIter = 1000)
 }
 \arguments{
 \item{data}{data.frame object containing the time series with relevant time ordering.}
@@ -27,6 +28,8 @@ In case it is not specified, it will defined internally.}
 \item{Q_library}{list of \code{sl3} algorithms for the fit of E(Y|A,Cy) (Q)}
 
 \item{g_library}{list of \code{sl3} algorithms for the fit of P(A|Ca) (g)}
+
+\item{blip_library}{list of \code{sl3} algorithms for the fit of the blip function.}
 
 \item{gbounds}{bounds for the q estimates.}
 

@@ -9,7 +9,7 @@ cv_split(fold, data, estQ, estg)
 \arguments{
 \item{fold}{one of the folds from the folds object.}
 
-\item{data}{data.frame object containing the time series with relevant time ordering.}
+\item{data}{data.frame object containing the time series with C_o as the relevant covariates.}
 
 \item{estQ}{object of class \code{initEst} with \code{sl3} results for Q.}
 

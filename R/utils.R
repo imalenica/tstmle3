@@ -80,3 +80,94 @@ bound <- function(x, bds){
   x
 }
 
+#' Extract validation samples
+#'
+#' Function to extract validation samples from prediction on all samples for use in CV-TMLE.
+#'
+#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param split_preds Cross-validated result of \code{cv_split}.
+#'
+#
+
+extract_vals <- function(folds, split_preds) {
+
+  val_preds <- cross_validate(extract_val, folds, split_preds)$preds
+  val_preds <- val_preds[order(val_preds$index), ]
+
+}
+
+#' Extract validation samples
+#'
+#' Function to extract the validation sets from split based predictions for use in CV-TMLE.
+#'
+#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param split_preds Cross-validated result of \code{cv_split}.
+#'
+#
+
+extract_val <- function(fold, split_preds) {
+
+  #Extract fold and corresponding validation samples.
+  v <- fold_index()
+  valid_idx <- validation()
+
+  val_preds <- sapply(split_preds, function(split_pred) {
+    split_pred[[v]][valid_idx]
+  })
+
+  #Add index to it (aka, which sample is in question)
+  val_preds <- as.data.frame(val_preds)
+  val_preds$index <- valid_idx
+  result <- list(preds = val_preds)
+  return(result)
+}
+
+#' Wrapper for split-specific predictions
+#'
+#' Function to make split-specific predictions more streamlined.
+#'
+#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param Q data.frame containg the relevant outcome and covariates for estimating Q.
+#' @param estQ Q result of \code{initEst} format.
+#' @param estg g result of \code{initEst} format.
+#'
+#
+
+estSplit<-function(folds, Q, estQ, estg){
+
+  estSplit <- cross_validate(cv_split, folds, Q, estQ, estg, .combine = F)
+  estSplit$errors<-NULL
+
+  estSplit_val<-extract_vals(folds, estSplit)
+
+  return(list(estSplit=estSplit,valSplit=estSplit_val))
+}
+
+#' Wrapper for split-specific Blip
+#'
+#' Function to make split-specific blip estimation more streamlined.
+#'
+#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param Q data.frame containg the relevant outcome and covariates for estimating Q.
+#' @param estSplt result object of \code{estSplit}.
+#' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
+#'
+#
+
+estBlip<-function(folds, estSplt, Q, blip_library){
+
+  blipSplit<-cross_validate(cv_split_blip, folds, estSplt$estSplit, Q, blip_library, .combine = F)
+
+  #Construct SL prediction of the blip:
+  #For now, just use non-negative linear least squares.
+  x<-do.call(rbind, blipSplit$cvPred)
+  y<-unlist(blipSplit$B)
+
+  fit_coef <- coef(nnls::nnls(as.matrix(x), as.matrix(y)))
+  fit_coef <- fit_coef/sum(fit_coef)
+
+  pred<-as.matrix(x) %*% fit_coef
+
+  return(list(blip=pred,coef=fit_coef,blipSplit=blipSplit,x=x,y=y))
+
+}

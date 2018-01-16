@@ -179,7 +179,7 @@ initEst_setA<-function(data, fit, setA){
 #' optimal treatment regime.
 #'
 #' @param fold one of the folds from the folds object.
-#' @param data data.frame object containing the time series with relevant time ordering.
+#' @param data data.frame object containing the time series with C_o as the relevant covariates.
 #' @param estQ object of class \code{initEst} with \code{sl3} results for Q.
 #' @param estg object of class \code{initEst} with \code{sl3} results for g.
 #'
@@ -261,6 +261,47 @@ cv_split <- function(fold, data, estQ, estg){
   return(list(QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
 
 }
+
+#' Split-specific blip predictions
+#'
+#' Function to estimate split-specific predictions for the blip function.
+#'
+#' @param fold one of the folds from the folds object.
+#' @param estSplit result of the cross-validated \code{cv_split} function.
+#' @param data data.frame object containing the time series with C_o as the relevant covariates.
+#'
+#' @return An object of class \code{tstmle}.
+#' \describe{
+#' \item{fullPred}{Split-specific blip with full V-fold cross-validation and Super Learner results.}
+#' \item{cvPred}{Split-specific blip with prediction for only a specific fold.}
+#' }
+#'
+#' @importFrom sl3 make_sl3_Task
+#'
+#' @export
+#'
+
+cv_split_blip<-function(fold,estSplit,data,SL.library){
+
+  v <- fold_index()
+
+  #Get the corresponding Blip for the fold v:
+  B<-data.frame(B=estSplit$B[[v]])
+
+  res<-initEst(Y = B, X =  data[,-1], folds = folds, SL.library = SL.library)
+
+  #Grab just the v fit prediction:
+  valset<-data[fold$validation_set,]
+
+  task<-sl3::make_sl3_Task(valset, covariates = names(valset[,-1]), outcome = names(valset[,1]),
+                           outcome_type=NULL, folds=fold)
+
+  valset_res<-res$cvFit[[v]]$predict(task)
+  row.names(valset_res)<-fold$validation_set
+
+  return(list(fullPred=res,cvPred=valset_res,valSet=fold$validation_set, B=B[fold$validation_set,]))
+}
+
 
 
 

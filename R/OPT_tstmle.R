@@ -11,6 +11,7 @@
 #' @param stratifyAY logical: should we stratify the cross-validation based on (A,Y) pairs
 #' @param Q_library list of \code{sl3} algorithms for the fit of E(Y|A,Cy) (Q)
 #' @param g_library list of \code{sl3} algorithms for the fit of P(A|Ca) (g)
+#' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
 #' @param gbounds bounds for the q estimates.
 #' @param Qbounds bounds for the Q estimates.
 #' @param maxIter maximum number of iterations for the iterative TMLE.
@@ -35,6 +36,7 @@
 tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
                      Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
+                     blip_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost"),
                      gbounds=c(1e-4,1-1e-4), Qbounds=c(1e-4,1-1e-4), maxIter=1000){
 
   #Create relevant data:
@@ -73,9 +75,10 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
 
   #Split-specific predictions:
   message("Generating split-specific predictions")
-  estSplit <- cross_validate(cv_split, folds, Q, estQ, estg)
+  estSplt<-estSplit(folds, Q, estQ, estg)
 
-
+  #Fit blip
+  message("Fitting the blip function")
 
 
 
@@ -91,3 +94,6 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
 
 
 }
+
+
+
