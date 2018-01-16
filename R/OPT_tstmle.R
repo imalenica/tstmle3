@@ -77,21 +77,18 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
   message("Generating split-specific predictions")
   estSplt<-estSplit(folds, Q, estQ, estg)
 
-  #Fit blip
+  #Fit blip:
   message("Fitting the blip function")
+  estBlp<-estBlip(folds, estSplt, Q, blip_library)
 
-
-
-
-
-
-
-
-
-
-
-
-
+  #Run TMLE for all rules:
+  res <- with(estSplt$valSplit, {
+    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=0)
+    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=1)
+    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=A)
+    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=estBlp$optA)
+    rbind(rule0, rule1, ruleA, ruleOpt)
+  })
 
 }
 

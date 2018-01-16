@@ -168,6 +168,10 @@ estBlip<-function(folds, estSplt, Q, blip_library){
 
   pred<-as.matrix(x) %*% fit_coef
 
-  return(list(blip=pred,coef=fit_coef,blipSplit=blipSplit,x=x,y=y))
+  #Treatment from Blip based on MSE:
+  #TO DO: add other options.
+  optA<-as.numeric(pred > 0)
+
+  return(list(blip=pred,optA=optA,coef=fit_coef,blipSplit=blipSplit,x=x,y=y))
 
 }

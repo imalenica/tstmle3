@@ -201,6 +201,10 @@ initEst_setA<-function(data, fit, setA){
 
 cv_split <- function(fold, data, estQ, estg){
 
+  #Observed data:
+  Y<-data[,1]
+  A<-data[,2]
+
   #Get fold index
   v <- fold_index()
 
@@ -258,7 +262,7 @@ cv_split <- function(fold, data, estQ, estg){
 
   K <- as.vector(abs(B))
 
-  return(list(QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
+  return(list(Y=Y,A=A,QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
 
 }
 
