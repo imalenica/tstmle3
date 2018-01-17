@@ -12,7 +12,9 @@ R/`tstmle`
 What's `tstmle`?
 ----------------
 
-The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of different causal effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables *O*(1),…*O*(*n*), where each *O*(*t*) with *t* ∈ {1, …*n*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the exposure *A*(*t*), outcome *Y*(*t*), and the covariate vector *W*(*t*).
+![ts\_plot.png](~/Dropbox/Berkeley_Projects/Software/tstmle/sandbox/ts_plot.png)
+
+The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of several causal effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables *O*(1),…*O*(*n*), where each *O*(*t*) with *t* ∈ {1, …*n*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the exposure *A*(*t*), outcome *Y*(*t*), and the covariate vector *W*(*t*).
 
 The `tstmle` package focuses on estimation of target parameters of the conditional distribution of *O*(*t*) given *C*<sub>*o*(*t*)</sub>, where *C*<sub>*o*(*t*)</sub> is some fixed-dimensional summary function of the past *O*(*t* − 1),…*O*(1) (van der Laan and Malenica 2018) In particular, `tstmle` provides estimation and inference for the following:
 
@@ -65,7 +67,7 @@ Examples
 
 To illustrate how `tstmle` may be used to ascertain the effect of an intervention on a single time series, consider the following examples.
 
-### Context-specific causal effect of single-time point intervention
+#### Context-specific causal effect of single-time point intervention
 
 In this section we utilize a simple, short data-set in order to estimate the causal effect of a single time-point intervention on the next outcome.
 
@@ -90,7 +92,7 @@ res$tmlePsi
 res$iptwPsi
 ```
 
-### Adaptive design learning the optimal individualized treatment rule
+#### Adaptive design learning the optimal individualized treatment rule
 
 Similarly to the last example, we again use the same short time-series data-set. However, in this example we are interested in adaptive design learning the optimal individualized treatment rule within a single time-series.
 
