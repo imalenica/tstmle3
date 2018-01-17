@@ -21,20 +21,20 @@ knitr::opts_chunk$set(
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-> Data-adaptive Estimation and Inference for Causal Effects with Single Time Series
+> Data-adaptive Estimation and Inference for Causal Effects with a Single Time Series
 
 __Authors:__ [Ivana Malenica](https://github.com/podTockom)
 
 ## What's `tstmle`?
 
 The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of different causal
-effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables $O(1), \dots O(n)$, where each $O(t)$ with $t \in \{1, \dots n\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the covariate vector $W(t)$, treatment or exposure $A(t)$, and outcome $Y(t)$. 
+effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables $O(1), \dots O(n)$, where each $O(t)$ with $t \in \{1, \dots n\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the exposure $A(t)$, outcome $Y(t)$, and the covariate vector $W(t)$. 
 
 The `tstmle` package focuses on estimation of target parameters of the conditional distribution of $O(t)$ given $C_{o(t)}$, where $C_{o(t)}$ is some fixed-dimensional summary function of the past $O(t-1), \dots O(1)$ [@c2] In particular, `tstmle` provides estimation and inference for the following:
 
-- data-dependent, $C_{o(t)}-$ specific, causal effect within a single time series
+- data-dependent, $C_{o(t)}-$ specific, causal effect within a single time series.
 
-- adaptive design for learning the optimal treatment rule within a single time series
+- adaptive design for learning the optimal treatment rule within a single time series.
 
 Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data [@c3].
 
@@ -45,15 +45,14 @@ Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/s
 You can install a stable release of `tstmle` from GitHub via
 [`devtools`](https://www.rstudio.com/products/rpackages/devtools/) with:
 
-```{r gh-installation, eval = FALSE}
+```{r tstmle-installation, eval = FALSE}
 devtools::install_github("podTockom/tstmle")
 ```
 
-Note that in order to run `tstmle` you will also need `sl3` and `tmle3`:
+Note that in order to run `tstmle` you will also need `sl3`:
 
-```{r gh-installation, eval = FALSE}
+```{r sl3-installation, eval = FALSE}
 devtools::install_github("jeremyrcoyle/sl3")
-devtools::install_github("jeremyrcoyle/tmle3")
 ```
 
 <!--
@@ -76,13 +75,61 @@ issue](https://github.com/podTockom/tstmle/issues).
 
 ---
 
-## Example
+## Examples
 
 To illustrate how `tstmle` may be used to ascertain the effect of an
-intervention on a single time series, consider the following example:
+intervention on a single time series, consider the following examples.
 
-```{r example}
-# Forthcoming...check back later.
+###Context-specific causal effect of single-time point intervention
+
+In this section we utilize a simple, short data-set in order to estimate the causal effect of a 
+single time-point intervention on the next outcome. 
+
+```{r SI example, eval=FALSE}
+#Load relevant packages:
+library(sl3)
+library(origami)
+
+#Load the data:
+data("sim_ts_s1_n50")
+
+#Set library:
+Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+
+#Obtain estimates:
+res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+
+#TMLE:
+res$tmlePsi
+#IPTW:
+res$iptwPsi
+
+```
+
+###Adaptive design learning the optimal individualized treatment rule
+
+Similarly to the last example, we again use the same short time-series data-set. However, in this example we are interested in adaptive design learning the optimal individualized treatment rule within a single time-series. 
+
+```{r OPT example, eval=FALSE}
+#Load relevant packages:
+library(sl3)
+library(origami)
+
+#Load the data:
+data("sim_ts_s1_n50")
+
+#Set libraries:
+Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
+
+#Obtain estimates:
+res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+
+#TMLE:
+res$tmlePsi
+
 ```
 
 ---

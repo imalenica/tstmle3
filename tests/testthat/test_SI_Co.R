@@ -20,7 +20,7 @@ library(origami)
 set.seed(1234)
 
 #load the data
-load("~/Dropbox/Berkeley_Projects/Software/tstmle/data/sim_ts_s1_n50.rda")
+data("sim_ts_s1_n50.rda")
 
 #Set library:
 Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
