@@ -6,4 +6,6 @@
 *.html
 vignettes/*.html
 .ipynb_checkpoints
-
+sandbox/
+README-refs.bib
+README.Rmd

@@ -209,7 +209,7 @@ cv_split <- function(fold, data, estQ, estg){
   A<-data[,2]
 
   #Get fold index
-  v <- fold_index()
+  v <- origami::fold_index()
 
   #Get the coefficients:
   coef<-estQ$fullFit$coefficients
@@ -220,7 +220,7 @@ cv_split <- function(fold, data, estQ, estg){
   splitg <- estg$cvFit[[v]]
 
   #Predict on all the data:
-  new_folds<-make_folds(data, fold_fun = folds_resubstitution)[[1]]
+  new_folds<-origami::make_folds(data, fold_fun = origami::folds_resubstitution)[[1]]
 
   #QAW
   covars<-names(data[,-1])
@@ -276,6 +276,7 @@ cv_split <- function(fold, data, estQ, estg){
 #' @param fold one of the folds from the folds object.
 #' @param estSplit result of the cross-validated \code{cv_split} function.
 #' @param data data.frame object containing the time series with C_o as the relevant covariates.
+#' @param SL.library list of \code{sl3} algorithms for the fit of the blip function.
 #'
 #' @return An object of class \code{tstmle}.
 #' \describe{
@@ -292,7 +293,7 @@ cv_split <- function(fold, data, estQ, estg){
 
 cv_split_blip<-function(fold,estSplit,data,SL.library){
 
-  v <- fold_index()
+  v <- origami::fold_index()
 
   #Get the corresponding Blip for the fold v:
   B<-data.frame(B=estSplit$B[[v]])

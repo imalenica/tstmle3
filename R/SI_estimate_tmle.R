@@ -47,30 +47,11 @@ tmleSI <- function(tmledata, maxIter=1000, Qbounds=c(1e-4,1-1e-4)){
        IC = eststep$Dstar, ED = ED, ED2 = ED2))
 }
 
-#' Fluctuate function
-#'
-#' Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation
-#'
-#' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
-#' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
-#' @param flucmod fluctuation model used.
-#' @param subset subset of the data used for fluctuation.
-#'
-#' @importFrom stats glm
-#'
-
-fluctuate <- function(tmledata, flucmod, subset = seq_len(nrow(tmledata))) {
-  suppressWarnings({
-    fluc <- stats::glm(flucmod, data = tmledata[subset, ], family = "binomial")
-  })
-  list(eps = coef(fluc)[1])
-}
-
 #' Update function
 #'
 #' Function to update the Q part of the likelihood using the specified fluctuation model/
 #'
-#' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
+#' @param data \code{data.frame} containing all observed values for the A and Y node,
 #' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
 #' @param Qbounds bounds for the Q estimates.
 #'

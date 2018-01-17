@@ -137,7 +137,7 @@ OPT_estimate <- function(tmledata) {
 #' Function to update the Q part of the likelihood using the specified fluctuation model for the
 #' context-specific parameter under user-specified rule.
 #'
-#' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
+#' @param data \code{data.frame} containing all observed values for the A and Y node,
 #' and either initial or updated estimates for g and Q.
 #' @param Qbounds bounds for the Q estimates.
 #'
@@ -177,5 +177,5 @@ fluctuate <- function(tmledata, flucmod, subset = seq_len(nrow(tmledata))) {
   suppressWarnings({
     fluc <- stats::glm(flucmod, data = tmledata[subset, ], family = "binomial")
   })
-  list(eps = coef(fluc)[1])
+  list(eps = stats::coef(fluc)[1])
 }

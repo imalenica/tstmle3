@@ -36,18 +36,3 @@ test_that("Single Intervention Context-Specific ATE with default parameters work
   expect_equal(res$steps, 1, tolerance = 0.01)
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

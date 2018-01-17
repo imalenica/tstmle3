@@ -21,7 +21,7 @@
 #' @param Q_SLlibrary list of \code{sl3} algorithms to be used for estimation of E(Y|A,Cy) (Q).
 #' For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
 #' This option is only relevant if \code{Co=FALSE}.
-#' @param q_SLlibrary list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
+#' @param g_SLlibrary list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
 #' For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
 #' This option is only relevant if \code{Co=FALSE}.
 #' @param gbounds bounds for the q estimates.
@@ -85,9 +85,9 @@ tstmleSI <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TR
       if(stratifyAY){
         AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
         #Stratified folds:
-        folds <- make_folds(strata_ids = AYstrata, V = V)
+        folds <- origami::make_folds(strata_ids = AYstrata, V = V)
       }else{
-        folds <- make_folds(QY, V)
+        folds <- origami::make_folds(QY, V)
       }
     }
 

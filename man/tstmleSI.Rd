@@ -41,6 +41,10 @@ In case it is not specified, it will defined internally.}
 For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
 This option is only relevant if \code{Co=FALSE}.}
 
+\item{g_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
+For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
+This option is only relevant if \code{Co=FALSE}.}
+
 \item{gbounds}{bounds for the q estimates.}
 
 \item{Qbounds}{bounds for the Q estimates.}
@@ -57,10 +61,6 @@ number of observations in each training sample. This option is only relevant if 
 \item{skip}{in case the time-series considered is very long, it is possible there will be many
 folds to consider. This parameter allows for few nodes to be skipped. Default is 0, which
 corresonds to no nodes skipped. This option is only relevant if \code{Co=FALSE}.}
-
-\item{q_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
-For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
-This option is only relevant if \code{Co=FALSE}.}
 }
 \value{
 An object of class \code{tstmleSI}.

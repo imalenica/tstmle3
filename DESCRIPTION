@@ -12,15 +12,16 @@ Description: This package provides data-adaptive estimation and inference using 
 Depends: R (>= 3.2.0)
 Imports:
     stats,
+    origami,
     sl3,
-    Hmisc
+    Hmisc,
+    nnls
 Suggests:
     testthat,
     knitr,
     rmarkdown
 Remotes:
     github::jeremyrcoyle/sl3
-    github::jeremyrcoyle/tmle3
 License: MIT + file LICENSE
 URL: https://github.com/podTockom/tstmle
 BugReports: https://github.com/podTockom/tstmle/issues

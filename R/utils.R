@@ -2,7 +2,7 @@
 #'
 #' Function to make passing algorithms to sl3 easier.
 #'
-#' @param learner_list list of algorithms, possibly with additional parameters.
+#' @param learner_lists list of algorithms, possibly with additional parameters.
 #'
 #' @importFrom sl3 make_learner
 #
@@ -15,7 +15,7 @@ make_stack <- function(learner_lists) {
       learner_list <- list(learner_list)
     }
 
-    learner <- do.call(make_learner, learner_list)
+    learner <- do.call(sl3::make_learner, learner_list)
     return(learner)
   })
 
@@ -48,12 +48,12 @@ sl3.fit<-function(task,SL.library){
   #cv_fit<-cv_fit$fit_object$fold_fits
 
   #Super Learner:
-  metalearner <- sl3::make_learner(Lrnr_nnls)
+  metalearner <- sl3::make_learner(sl3::Lrnr_nnls)
   sl <- sl3::Lrnr_sl$new(learners = sl_stack, metalearner = metalearner)
   sl_fit <- sl$train(task)
 
   #Save risk:
-  risk<-sl_fit$cv_risk(loss_squared_error)
+  risk<-sl_fit$cv_risk(sl3::loss_squared_error)
 
   #Save predictions:
   sl_preds <- sl_fit$predict()
@@ -90,7 +90,7 @@ bound <- function(x, bds){
 
 extract_vals <- function(folds, split_preds) {
 
-  val_preds <- cross_validate(extract_val, folds, split_preds)$preds
+  val_preds <- origami::cross_validate(extract_val, folds, split_preds)$preds
   val_preds <- val_preds[order(val_preds$index), ]
 
 }
@@ -99,15 +99,15 @@ extract_vals <- function(folds, split_preds) {
 #'
 #' Function to extract the validation sets from split based predictions for use in CV-TMLE.
 #'
-#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param fold one fold from a list of folds.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
 
 extract_val <- function(fold, split_preds) {
 
   #Extract fold and corresponding validation samples.
-  v <- fold_index()
-  valid_idx <- validation()
+  v <- origami::fold_index()
+  valid_idx <- origami::validation()
 
   val_preds <- sapply(split_preds, function(split_pred) {
     split_pred[[v]][valid_idx]
@@ -133,7 +133,7 @@ extract_val <- function(fold, split_preds) {
 
 estSplit<-function(folds, Q, estQ, estg){
 
-  estSplit <- cross_validate(cv_split, folds, Q, estQ, estg, .combine = F)
+  estSplit <- origami::cross_validate(cv_split, folds, Q, estQ, estg, .combine = F)
   estSplit$errors<-NULL
 
   estSplit_val<-extract_vals(folds, estSplit)
@@ -154,14 +154,14 @@ estSplit<-function(folds, Q, estQ, estg){
 
 estBlip<-function(folds, estSplt, Q, blip_library){
 
-  blipSplit<-cross_validate(cv_split_blip, folds, estSplt$estSplit, Q, blip_library, .combine = F)
+  blipSplit<-origami::cross_validate(cv_split_blip, folds, estSplt$estSplit, Q, blip_library, .combine = F)
 
   #Construct SL prediction of the blip:
   #For now, just use non-negative linear least squares.
   x<-do.call(rbind, blipSplit$cvPred)
   y<-unlist(blipSplit$B)
 
-  fit_coef <- coef(nnls::nnls(as.matrix(x), as.matrix(y)))
+  fit_coef <- stats::coef(nnls::nnls(as.matrix(x), as.matrix(y)))
   fit_coef <- fit_coef/sum(fit_coef)
 
   pred<-as.matrix(x) %*% fit_coef

@@ -7,9 +7,9 @@
 extract_val(fold, split_preds)
 }
 \arguments{
-\item{split_preds}{Cross-validated result of \code{cv_split}.}
+\item{fold}{one fold from a list of folds.}
 
-\item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
+\item{split_preds}{Cross-validated result of \code{cv_split}.}
 }
 \description{
 Function to extract the validation sets from split based predictions for use in CV-TMLE.

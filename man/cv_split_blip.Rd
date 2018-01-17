@@ -12,6 +12,8 @@ cv_split_blip(fold, estSplit, data, SL.library)
 \item{estSplit}{result of the cross-validated \code{cv_split} function.}
 
 \item{data}{data.frame object containing the time series with C_o as the relevant covariates.}
+
+\item{SL.library}{list of \code{sl3} algorithms for the fit of the blip function.}
 }
 \value{
 An object of class \code{tstmle}.

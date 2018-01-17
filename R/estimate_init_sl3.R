@@ -83,11 +83,11 @@ initEst_sl3 <- function(data, fitQ=TRUE, j=1, folds=NULL, fold_fn="folds_rolling
     }
 
     if(fold_fn=="folds_rolling_origin"){
-      folds <- make_folds(ts(data), fold_fun = origami::folds_rolling_origin, first_window = first,
+      folds <- origami::make_folds(stats::ts(data), fold_fun = origami::folds_rolling_origin, first_window = first,
                                    validation_size = 1, batch=batch)
 
     }else if(fold_fn=="folds_rolling_window"){
-      folds <- make_folds(ts(data), fold_fun = origami::folds_rolling_window, window_size = window,
+      folds <- origami::make_folds(stats::ts(data), fold_fun = origami::folds_rolling_window, window_size = window,
                                    validation_size = 1, batch=batch)
     }
 

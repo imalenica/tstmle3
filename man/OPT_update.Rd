@@ -7,10 +7,10 @@
 OPT_update(data, Qbounds)
 }
 \arguments{
-\item{Qbounds}{bounds for the Q estimates.}
-
-\item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
+\item{data}{\code{data.frame} containing all observed values for the A and Y node,
 and either initial or updated estimates for g and Q.}
+
+\item{Qbounds}{bounds for the Q estimates.}
 }
 \description{
 Function to update the Q part of the likelihood using the specified fluctuation model for the

@@ -7,7 +7,7 @@
 make_stack(learner_lists)
 }
 \arguments{
-\item{learner_list}{list of algorithms, possibly with additional parameters.}
+\item{learner_lists}{list of algorithms, possibly with additional parameters.}
 }
 \description{
 Function to make passing algorithms to sl3 easier.

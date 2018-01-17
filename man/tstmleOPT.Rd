@@ -4,7 +4,7 @@
 \alias{tstmleOPT}
 \title{Context-specific optimal treatment effect for a single time series}
 \usage{
-tstmleOPT(data, Co = TRUE, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
+tstmleOPT(data, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
   stratifyAY = TRUE, Q_library = list("Lrnr_mean", "Lrnr_glm_fast",
   "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
   "Lrnr_glmnet"), blip_library = list("Lrnr_mean", "Lrnr_glm_fast",

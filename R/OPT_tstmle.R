@@ -41,7 +41,7 @@
 #' @export
 #
 
-tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
+tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
                      Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      blip_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost"),
@@ -65,9 +65,9 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
     if(stratifyAY){
       AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
       #Stratified folds:
-      folds <- make_folds(strata_ids = AYstrata, V = V)
+      folds <- origami::make_folds(strata_ids = AYstrata, V = V)
     }else{
-      folds <- make_folds(QY, V)
+      folds <- origami::make_folds(QY, V)
     }
   }
 
@@ -101,6 +101,8 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
   #Extract psi for each rule:
   res_fin<-extract_res(res)
 
-  return(res_fin)
+  return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
+              IC=res_fin$IC,steps=res_fin$steps,initialData=res_fin$initialData,
+              tmleData=res_fin$tmleData,all=res_fin$all))
 
 }
