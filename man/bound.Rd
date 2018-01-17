@@ -7,8 +7,10 @@
 bound(x, bds)
 }
 \arguments{
-\item{learner_list}{list of algorithms, possibly with additional parameters.}
+\item{x}{observed values of either Q or g.}
+
+\item{bds}{list containing the upper and lower bound for x.}
 }
 \description{
-Function to bound Q and g estimates
+Function to bound Q and g estimates with user specified bounds.
 }

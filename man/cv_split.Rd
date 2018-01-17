@@ -18,6 +18,8 @@ cv_split(fold, data, estQ, estg)
 \value{
 An object of class \code{tstmle}.
 \describe{
+\item{Y}{Observed outcomes (Y).}
+\item{A}{Observed exposure (A)}
 \item{QAW}{Split-specific prediction of Q.}
 \item{Q1W}{Split-specific prediction of Q(1,W).}
 \item{Q0W}{Split-specific prediction of Q(0,W).}

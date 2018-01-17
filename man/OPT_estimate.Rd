@@ -2,15 +2,15 @@
 % Please edit documentation in R/OPT_estimate_tmle.R
 \name{OPT_estimate}
 \alias{OPT_estimate}
-\title{Estimate function}
+\title{Estimate function for the context-specific parameter under user-specified rule}
 \usage{
 OPT_estimate(tmledata)
 }
 \arguments{
 \item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
-estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
+and either initial or updated estimates for g and Q.}
 }
 \description{
-Function to estimate the optimal treatment parameter and coresponding relevant parts of the influence curve
-for the single intervention contex-specific parameter.
+Function to estimate the context-specific parameter under user-specified rule and
+coresponding relevant parts of the influence curve for the single intervention.
 }

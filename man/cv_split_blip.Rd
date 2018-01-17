@@ -18,6 +18,8 @@ An object of class \code{tstmle}.
 \describe{
 \item{fullPred}{Split-specific blip with full V-fold cross-validation and Super Learner results.}
 \item{cvPred}{Split-specific blip with prediction for only a specific fold.}
+\item{valSet}{Validation samples used for each fold.}
+\item{B}{Estimated blip for the validation samples.}
 }
 }
 \description{

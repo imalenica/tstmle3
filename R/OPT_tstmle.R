@@ -1,6 +1,9 @@
 #' Context-specific optimal treatment effect for a single time series
 #'
-#' This function estimates the optimal individualized treatment effect for a single time series.
+#' This function estimates the optimal individualized treatment effect for a single time series,
+#' under a single intervention on the exposure A. In addition, it estimates the
+#' context-specific mean of the outcome under other user-specified rules,
+#' not necessarily optimal regimes.
 #'
 #' @param data data.frame object containing the time series with relevant time ordering.
 #' @param Cy numeric specifying possible Markov order for Y nodes.
@@ -16,19 +19,24 @@
 #' @param Qbounds bounds for the Q estimates.
 #' @param maxIter maximum number of iterations for the iterative TMLE.
 #'
-#' @return An object of class \code{tstmleOPT}.
+#' @return An object of class \code{tstmle}.
 #' \describe{
-#' \item{tmlePsi}{Average treatment effect estimated using TMLE.}
-#' \item{iptwPsi}{Average treatment effect estimated using IPTW.}
-#' \item{tmleSD}{Standard deviation for the TMLE estimated parameter.}
-#' \item{tmleCI}{Confidence Interval for the TMLE estimated parameter.}
-#' \item{IC}{Influence function.}
-#' \item{steps}{Number of steps until convergence of the iterative TMLE.}
-#' \item{initialData}{Initial estimates of g, Q.}
+#' \item{tmlePsi}{Context-specific mean of the outcome under user-specified \code{ruleA} estimated
+#' using TMLE methodology. In particular, it returns psi under the optimal regime, observed exposure,
+#' A=1 and A=0.}
+#' \item{tmleSD}{Standard deviation of the context-specific mean of the outcome under
+#' user-specified \code{ruleA} estimated using TMLE methodology. In particular, it returns sd under the
+#' optimal regime, observed exposure, A=1 and A=0.}
+#' \item{tmleCI}{Confidence interval of the context-specific mean of the outcome under
+#' user-specified \code{ruleA} estimated using TMLE methodology. It returns CI under the
+#' optimal regime, observed exposure, A=1 and A=0.}
+#' \item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.
+#' It returns IC under the optimal regime, observed exposure, A=1 and A=0.}
+#' \item{steps}{Number of steps until convergence of the iterative TMLE for each rule.}
+#' \item{initialData}{Initial estimates of g and Q, and observed A and Y.}
 #' \item{tmleData}{Final updates estimates of g, Q and clever covariates.}
+#' \item{all}{Full results of \code{tmleOPT}.}
 #' }
-#'
-#' @importFrom stats qnorm
 #'
 #' @export
 #
@@ -83,14 +91,16 @@ tstmleOPT <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = T
 
   #Run TMLE for all rules:
   res <- with(estSplt$valSplit, {
-    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=0)
-    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=1)
-    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=A)
-    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, rule=estBlp$optA)
-    rbind(rule0, rule1, ruleA, ruleOpt)
+    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
+    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
+    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
+    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
+    list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
   })
 
+  #Extract psi for each rule:
+  res_fin<-extract_res(res)
+
+  return(res_fin)
+
 }
-
-
-

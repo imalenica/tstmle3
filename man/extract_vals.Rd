@@ -2,15 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{extract_vals}
 \alias{extract_vals}
-\title{Extract validation samples}
+\title{Cross-validate and extract validation samples}
 \usage{
 extract_vals(folds, split_preds)
 }
 \arguments{
-\item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
+\item{folds}{user-specified list of folds. It should correspond to an element of \code{origami}.}
 
 \item{split_preds}{Cross-validated result of \code{cv_split}.}
 }
 \description{
-Function to extract validation samples from prediction on all samples for use in CV-TMLE.
+Function to extract and cross-validate validation samples from prediction on all
+samples for use in CV-TMLE.
 }

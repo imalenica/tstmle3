@@ -1,7 +1,7 @@
 #' Main TMLE Calculations for the Optimal Individualized Treatment Regime Parameter
 #'
-#' This function performs all the main TMLE calculations for the Context-Specific
-#' Optimal Individualized Treatment Regime Parameter.
+#' This function performs all the main TMLE calculations for the context-specific
+#' optimal individualized treatment Regime Parameter.
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
 #' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
@@ -47,7 +47,43 @@ tmleOPT <- function(tmledata, maxIter=1000, Qbounds=c(1e-4,1-1e-4)){
               IC = eststep$Dstar, ED = ED, ED2 = ED2))
 }
 
-ruletmle<-function(obsA,obsY,pA1,Q0W,Q1W,rule,maxIter=1000,Qbounds=c(1e-4,1-1e-4)){
+#' Prepare for Optimal Individualized Treatment Regime TMLE Procedure
+#'
+#' This function performs all the necessary steps in order to call the main TMLE function
+#' for the optimal individualized treatment regime, \code{tmleOPT}. It also performs all the
+#' calculations necessary to obtain ineference on the parameter.
+#'
+#' @param obsA Observed exposure (A).
+#' @param obsY Observed outcome (Y).
+#' @param pA1 Estimate of g, or P(A=1) obtained by calling \code{estSplit}.
+#' @param Q0W Estimate of Q(0,W), or E(Y|A=0,W) obtained by calling \code{estSplit}.
+#' @param Q1W Estimate of Q(1,W), or E(Y|A=1,W) obtained by calling \code{estSplit}.
+#' @param ruleA user-specified rule for exposure under which we want to estimate the context-specific
+#' mean of the outcome.
+#' @param maxIter maximum number of iterations for the iterative TMLE.
+#' @param Qbounds bounds for the Q estimates.
+#'
+#' @return An object of class \code{tstmle}.
+#' \describe{
+#' \item{tmlePsi}{Context-specific mean of the outcome under user-specified \code{ruleA} estimated
+#' using TMLE methodology.}
+#' \item{tmleSD}{Standard deviation of the context-specific mean of the outcome under
+#' user-specified \code{ruleA} estimated using TMLE methodology.}
+#' \item{tmleCI}{Confidence interval of the context-specific mean of the outcome under
+#' user-specified \code{ruleA} estimated using TMLE methodology.}
+#' \item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.}
+#' \item{steps}{Number of steps until convergence of the iterative TMLE.}
+#' \item{initialData}{Initial estimates of g and Q, and observed A and Y.}
+#' \item{tmleData}{Final updates estimates of g, Q and clever covariates.}
+#' \item{all}{Full results of \code{tmleOPT}.}
+#' }
+#'
+#' @importFrom stats qnorm
+#'
+#' @export
+#
+
+ruletmle<-function(obsA,obsY,pA1,Q0W,Q1W,ruleA,maxIter=1000,Qbounds=c(1e-4,1-1e-4)){
 
   #Get samples that follow the rule
   #(1 for samples that follow the rule in the observed data)
@@ -73,13 +109,13 @@ ruletmle<-function(obsA,obsY,pA1,Q0W,Q1W,rule,maxIter=1000,Qbounds=c(1e-4,1-1e-4
               IC=res$IC, steps=res$steps, initialData=tmledata, tmleData=res$tmledata,all=res))
 }
 
-#' Estimate function
+#' Estimate function for the context-specific parameter under user-specified rule
 #'
-#' Function to estimate the optimal treatment parameter and coresponding relevant parts of the influence curve
-#' for the single intervention contex-specific parameter.
+#' Function to estimate the context-specific parameter under user-specified rule and
+#' coresponding relevant parts of the influence curve for the single intervention.
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
-#' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
+#' and either initial or updated estimates for g and Q.
 #'
 
 OPT_estimate <- function(tmledata) {
@@ -96,12 +132,13 @@ OPT_estimate <- function(tmledata) {
 
 }
 
-#' Update function
+#' Update function for the context-specific parameter under user-specified rule
 #'
-#' Function to update the Q part of the likelihood using the specified fluctuation model/
+#' Function to update the Q part of the likelihood using the specified fluctuation model for the
+#' context-specific parameter under user-specified rule.
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
-#' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
+#' and either initial or updated estimates for g and Q.
 #' @param Qbounds bounds for the Q estimates.
 #'
 #' @importFrom stats plogis qlogis
@@ -109,7 +146,7 @@ OPT_estimate <- function(tmledata) {
 
 OPT_update <- function(data, Qbounds) {
 
-  subset <- with(tmledata, which(0 < Qk & Qk < 1 & A == 1))
+  subset <- with(data, which(0 < Qk & Qk < 1 & A == 1))
   eps <- 0
 
   if (length(subset) > 0) {
@@ -126,10 +163,10 @@ OPT_update <- function(data, Qbounds) {
 
 #' Fluctuate function
 #'
-#' Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation
+#' Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation.
 #'
 #' @param tmledata \code{data.frame} containing all observed values for the A and Y node,
-#' estimate of g, Q, as well as Q evaluated when A=1 and A=0.
+#' and either initial or updated estimates for g and Q.
 #' @param flucmod fluctuation model used.
 #' @param subset subset of the data used for fluctuation.
 #'

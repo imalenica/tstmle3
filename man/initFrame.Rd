@@ -25,4 +25,5 @@ An object of class \code{tstmle}.
 }
 \description{
 Function to create the initial data.frame \code{sl3} would expect with i.i.d data.
+The newly created data will rely on the specified Cy and Ca.
 }

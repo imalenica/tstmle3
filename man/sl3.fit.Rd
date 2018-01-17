@@ -9,8 +9,7 @@ sl3.fit(task, SL.library)
 \arguments{
 \item{task}{task object of \code{sl3::make_sl3_Task} form.}
 
-\item{SL.library}{list of \code{sl3} algorithms to be used for estimation. For the list of available
-learners for time-series, see \code{sl3::sl3_list_learners(c("timeseries"))}.}
+\item{SL.library}{list of \code{sl3} algorithms to be used for estimation.}
 }
 \description{
 Function to make Super Learning with \code{sl3} easier.

@@ -23,7 +23,7 @@ An object of class \code{tstmle}.
 \item{SL.library}{list of \code{sl3} algorithms to be used for estimation.}
 \item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
 \item{fullFit}{Fit on all samples.}
-\item{ccvFit}{CV fit.}
+\item{cvFit}{CV fit.}
 }
 }
 \description{

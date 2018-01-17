@@ -29,8 +29,7 @@ make_stack <- function(learner_lists) {
 #' Function to make Super Learning with \code{sl3} easier.
 #'
 #' @param task task object of \code{sl3::make_sl3_Task} form.
-#' @param SL.library list of \code{sl3} algorithms to be used for estimation. For the list of available
-#' learners for time-series, see \code{sl3::sl3_list_learners(c("timeseries"))}.
+#' @param SL.library list of \code{sl3} algorithms to be used for estimation.
 #'
 #' @importFrom sl3 make_learner Lrnr_sl
 #
@@ -68,11 +67,11 @@ sl3.fit<-function(task,SL.library){
 
 #' Bounds for Q and g
 #'
-#' Function to bound Q and g estimates
+#' Function to bound Q and g estimates with user specified bounds.
 #'
-#' @param learner_list list of algorithms, possibly with additional parameters.
+#' @param x observed values of either Q or g.
+#' @param bds list containing the upper and lower bound for x.
 #'
-#
 
 bound <- function(x, bds){
   x[x > max(bds)] <- max(bds)
@@ -80,14 +79,14 @@ bound <- function(x, bds){
   x
 }
 
-#' Extract validation samples
+#' Cross-validate and extract validation samples
 #'
-#' Function to extract validation samples from prediction on all samples for use in CV-TMLE.
+#' Function to extract and cross-validate validation samples from prediction on all
+#' samples for use in CV-TMLE.
 #'
-#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
-#
 
 extract_vals <- function(folds, split_preds) {
 
@@ -103,7 +102,6 @@ extract_vals <- function(folds, split_preds) {
 #' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
-#
 
 extract_val <- function(fold, split_preds) {
 
@@ -126,7 +124,7 @@ extract_val <- function(fold, split_preds) {
 #'
 #' Function to make split-specific predictions more streamlined.
 #'
-#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
+#' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param Q data.frame containg the relevant outcome and covariates for estimating Q.
 #' @param estQ Q result of \code{initEst} format.
 #' @param estg g result of \code{initEst} format.
@@ -152,7 +150,7 @@ estSplit<-function(folds, Q, estQ, estg){
 #' @param estSplt result object of \code{estSplit}.
 #' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
 #'
-#
+#'
 
 estBlip<-function(folds, estSplt, Q, blip_library){
 
@@ -173,5 +171,61 @@ estBlip<-function(folds, estSplt, Q, blip_library){
   optA<-as.numeric(pred > 0)
 
   return(list(blip=pred,optA=optA,coef=fit_coef,blipSplit=blipSplit,x=x,y=y))
+
+}
+
+#' Wrapper for final TMLE results
+#'
+#' Function to make extraction of final TMLE results for the optimal individualized
+#' treatment regime parameter more streamlined. In particular, it should provide inference and
+#' results for 4 different scenarious, where the exposure is set to both binary possibilities,
+#' observed exposure, and learner optimal rule.
+#'
+#' @param res results from multiple calls to \code{ruletmle}.
+#'
+
+extract_res<-function(res){
+
+  #Extract Psi for each rule:
+  psi <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$tmlePsi})))
+  row.names(psi)<-c("A=0","A=1","A=A","A=optA")
+  names(psi)<-"Psi"
+
+  #Extract SD for each rule:
+  sd <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$tmleSD})))
+  row.names(sd)<-c("A=0","A=1","A=A","A=optA")
+  names(sd)<-"SD"
+
+  #Extract CI for each rule:
+  lower <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$tmleCI[1]})))
+  upper <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$tmleCI[2]})))
+  CI<-cbind.data.frame(lower=lower,upper=upper)
+  names(CI)<-c("lower","upper")
+  row.names(CI)<-c("A=0","A=1","A=A","A=optA")
+
+  #Extract IC for each rule:
+  IC<-lapply(seq_len(4), function(x) {res[[x]]$IC$Dstar_psi})
+  IC<-data.frame(do.call("cbind", IC))
+  names(IC)<-c("A=0","A=1","A=A","A=optA")
+
+  #Extract number of steps until convergence:
+  steps <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$steps})))
+  row.names(steps)<-c("A=0","A=1","A=A","A=optA")
+  names(steps)<-"steps"
+
+  #Extract initial data:
+  initialData<-lapply(seq_len(4), function(x) {res[[x]]$initialData})
+  names(initialData)<-c("rule0","rule1","ruleA","ruleOpt")
+
+  #Extract final data:
+  tmleData<-lapply(seq_len(4), function(x) {res[[x]]$tmleData})
+  names(tmleData)<-c("rule0","rule1","ruleA","ruleOpt")
+
+  #Extract all results:
+  all<-lapply(seq_len(4), function(x) {res[[x]]$all})
+  names(all)<-c("rule0","rule1","ruleA","ruleOpt")
+
+  return(list(tmlePsi=psi,tmleSD=sd,tmleCI=CI,IC=IC,steps=steps,initialData=initialData,
+              tmleData=tmleData,all=all))
 
 }

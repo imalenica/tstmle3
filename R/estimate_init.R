@@ -17,7 +17,7 @@
 #' \item{SL.library}{list of \code{sl3} algorithms to be used for estimation.}
 #' \item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
 #' \item{fullFit}{Fit on all samples.}
-#' \item{ccvFit}{CV fit.}
+#' \item{cvFit}{CV fit.}
 #' }
 #'
 #' @importFrom sl3 make_sl3_Task
@@ -51,6 +51,7 @@ initEst <- function(Y, X, folds=NULL,SL.library) {
 #' Make initial dataframe
 #'
 #' Function to create the initial data.frame \code{sl3} would expect with i.i.d data.
+#' The newly created data will rely on the specified Cy and Ca.
 #'
 #' @param data data.frame object containing the time series with relevant time ordering.
 #' @param Cy numeric specifying possible Markov order for Y nodes.
@@ -185,6 +186,8 @@ initEst_setA<-function(data, fit, setA){
 #'
 #' @return An object of class \code{tstmle}.
 #' \describe{
+#' \item{Y}{Observed outcomes (Y).}
+#' \item{A}{Observed exposure (A)}
 #' \item{QAW}{Split-specific prediction of Q.}
 #' \item{Q1W}{Split-specific prediction of Q(1,W).}
 #' \item{Q0W}{Split-specific prediction of Q(0,W).}
@@ -262,7 +265,7 @@ cv_split <- function(fold, data, estQ, estg){
 
   K <- as.vector(abs(B))
 
-  return(list(Y=Y,A=A,QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
+  return(list(Y=Y, A=A, QAW = QAW, Q1W = Q1W, Q0W = Q0W, pA1 = pA1, B = B, Rule = Rule, K = K))
 
 }
 
@@ -278,6 +281,8 @@ cv_split <- function(fold, data, estQ, estg){
 #' \describe{
 #' \item{fullPred}{Split-specific blip with full V-fold cross-validation and Super Learner results.}
 #' \item{cvPred}{Split-specific blip with prediction for only a specific fold.}
+#' \item{valSet}{Validation samples used for each fold.}
+#' \item{B}{Estimated blip for the validation samples.}
 #' }
 #'
 #' @importFrom sl3 make_sl3_Task
@@ -303,9 +308,5 @@ cv_split_blip<-function(fold,estSplit,data,SL.library){
   valset_res<-res$cvFit[[v]]$predict(task)
   row.names(valset_res)<-fold$validation_set
 
-  return(list(fullPred=res,cvPred=valset_res,valSet=fold$validation_set, B=B[fold$validation_set,]))
+  return(list(fullPred=res,cvPred=valset_res,valSet=fold$validation_set,B=B[fold$validation_set,]))
 }
-
-
-
-

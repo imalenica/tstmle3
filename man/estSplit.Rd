@@ -7,7 +7,7 @@
 estSplit(folds, Q, estQ, estg)
 }
 \arguments{
-\item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.}
+\item{folds}{user-specified list of folds. It should correspond to an element of \code{origami}.}
 
 \item{Q}{data.frame containg the relevant outcome and covariates for estimating Q.}
 

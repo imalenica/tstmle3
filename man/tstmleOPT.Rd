@@ -38,18 +38,28 @@ In case it is not specified, it will defined internally.}
 \item{maxIter}{maximum number of iterations for the iterative TMLE.}
 }
 \value{
-An object of class \code{tstmleOPT}.
+An object of class \code{tstmle}.
 \describe{
-\item{tmlePsi}{Average treatment effect estimated using TMLE.}
-\item{iptwPsi}{Average treatment effect estimated using IPTW.}
-\item{tmleSD}{Standard deviation for the TMLE estimated parameter.}
-\item{tmleCI}{Confidence Interval for the TMLE estimated parameter.}
-\item{IC}{Influence function.}
-\item{steps}{Number of steps until convergence of the iterative TMLE.}
-\item{initialData}{Initial estimates of g, Q.}
+\item{tmlePsi}{Context-specific mean of the outcome under user-specified \code{ruleA} estimated
+using TMLE methodology. In particular, it returns psi under the optimal regime, observed exposure,
+A=1 and A=0.}
+\item{tmleSD}{Standard deviation of the context-specific mean of the outcome under
+user-specified \code{ruleA} estimated using TMLE methodology. In particular, it returns sd under the
+optimal regime, observed exposure, A=1 and A=0.}
+\item{tmleCI}{Confidence interval of the context-specific mean of the outcome under
+user-specified \code{ruleA} estimated using TMLE methodology. It returns CI under the
+optimal regime, observed exposure, A=1 and A=0.}
+\item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.
+It returns IC under the optimal regime, observed exposure, A=1 and A=0.}
+\item{steps}{Number of steps until convergence of the iterative TMLE for each rule.}
+\item{initialData}{Initial estimates of g and Q, and observed A and Y.}
 \item{tmleData}{Final updates estimates of g, Q and clever covariates.}
+\item{all}{Full results of \code{tmleOPT}.}
 }
 }
 \description{
-This function estimates the optimal individualized treatment effect for a single time series.
+This function estimates the optimal individualized treatment effect for a single time series,
+under a single intervention on the exposure A. In addition, it estimates the
+context-specific mean of the outcome under other user-specified rules,
+not necessarily optimal regimes.
 }

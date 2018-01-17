@@ -2,7 +2,7 @@
 % Please edit documentation in R/OPT_estimate_tmle.R
 \name{OPT_update}
 \alias{OPT_update}
-\title{Update function}
+\title{Update function for the context-specific parameter under user-specified rule}
 \usage{
 OPT_update(data, Qbounds)
 }
@@ -10,8 +10,9 @@ OPT_update(data, Qbounds)
 \item{Qbounds}{bounds for the Q estimates.}
 
 \item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
-estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
+and either initial or updated estimates for g and Q.}
 }
 \description{
-Function to update the Q part of the likelihood using the specified fluctuation model/
+Function to update the Q part of the likelihood using the specified fluctuation model for the
+context-specific parameter under user-specified rule.
 }

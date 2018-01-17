@@ -26,6 +26,6 @@ An object of class \code{tstmle}.
 }
 }
 \description{
-This function performs all the main TMLE calculations for the Context-Specific
-Optimal Individualized Treatment Regime Parameter.
+This function performs all the main TMLE calculations for the context-specific
+optimal individualized treatment Regime Parameter.
 }

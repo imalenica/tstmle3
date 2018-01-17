@@ -11,7 +11,7 @@ fluctuate(tmledata, flucmod, subset = seq_len(nrow(tmledata)))
 }
 \arguments{
 \item{tmledata}{\code{data.frame} containing all observed values for the A and Y node,
-estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
+and either initial or updated estimates for g and Q.}
 
 \item{flucmod}{fluctuation model used.}
 
@@ -25,7 +25,7 @@ estimate of g, Q, as well as Q evaluated when A=1 and A=0.}
 \item{subset}{subset of the data used for fluctuation.}
 }
 \description{
-Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation
+Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation.
 
 Function to estimate logistic parametric submodel and get updated estmate logistic fluctuation
 }
