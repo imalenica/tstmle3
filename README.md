@@ -12,11 +12,11 @@ R/`tstmle`
 What's `tstmle`?
 ----------------
 
-The `tstmle` package implements robust estimation and provides inference for data-dependent causal effects based on the observation of a single time series.
+The `tstmle` package implements robust estimation and provides inference for data-dependent causal effects based observing a single time series.
 
-Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables *O*(1),…*O*(*N*) where each *O*(*t*) with *t* ∈ {1, …, *N*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the treatment or exposure *A*(*t*), outcome of interest *Y*(*t*), and possibly other covariates *W*(*t*). While studying time-series data, one might be interested in what the Additionally, one might also want to
+Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables *O*(1),…*O*(*N*) where each *O*(*t*) with *t* ∈ {1, …, *N*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the treatment or exposure *A*(*t*), outcome of interest *Y*(*t*), and possibly other covariates *W*(*t*). While studying time-series data, one might be interested in what the conditional mean of the outcome would have been had we intervened on one or more of the treatment nodes in the observed time-series. Additionally, one might also want to learn the optimal treatment rule for the single unit over time.
 
-The `tstmle` package focuses on a class of statistical target parameters defined as the average over time *t* of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series. In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
+The `tstmle` package focuses on a class of statistical target parameters defined as the average over time *t* of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series (van der Laan and Malenica 2018). In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
 
 In particular, `tstmle` implements 3 different context-specific parameters:
 
@@ -157,3 +157,5 @@ References
 ----------
 
 Malenica, Ivana, and Mark J van der Laan. 2018. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
+
+van der Laan, Mark J, and Ivana Malenica. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”
