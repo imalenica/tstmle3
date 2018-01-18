@@ -3,7 +3,7 @@
 R/`tstmle`
 ==========
 
-[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/tstmle/master.svg)](https://codecov.io/github/podTockom/tstmle?branch=master) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Data-adaptive Estimation and Inference for Causal Effects with a Single Time Series
 
@@ -12,15 +12,19 @@ R/`tstmle`
 What's `tstmle`?
 ----------------
 
-include\_graphics("~/Dropbox/Berkeley\_Projects/Software/tstmle/sandbox/ts\_plot.png")
+The `tstmle` package implements robust estimation and provides inference for data-dependent causal effects based on the observation of a single time series.
 
-The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of several causal effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables *O*(1),…*O*(*n*), where each *O*(*t*) with *t* ∈ {1, …*n*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the exposure *A*(*t*), outcome *Y*(*t*), and the covariate vector *W*(*t*).
+Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables *O*(1),…*O*(*N*) where each *O*(*t*) with *t* ∈ {1, …, *N*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the treatment or exposure *A*(*t*), outcome of interest *Y*(*t*), and possibly other covariates *W*(*t*). While studying time-series data, one might be interested in what the Additionally, one might also want to
 
-The `tstmle` package focuses on estimation of target parameters of the conditional distribution of *O*(*t*) given *C*<sub>*o*(*t*)</sub>, where *C*<sub>*o*(*t*)</sub> is some fixed-dimensional summary function of the past *O*(*t* − 1),…*O*(1) (van der Laan and Malenica 2018) In particular, `tstmle` provides estimation and inference for the following:
+The `tstmle` package focuses on a class of statistical target parameters defined as the average over time *t* of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series. In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
 
--   data-dependent, *C*<sub>*o*(*t*)</sub>− specific, causal effect within a single time series.
+In particular, `tstmle` implements 3 different context-specific parameters:
 
--   adaptive design for learning the optimal treatment rule within a single time series.
+1.  Average over time of context-specific causal effect of a single time point intervention.
+
+2.  Average over time of context-specific causal effect of multiple time point interventions.
+
+3.  Adaptive design learning the optimal individualized rule within a single time-series.
 
 Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data (Malenica and van der Laan 2018).
 
@@ -52,13 +56,6 @@ install.packages("tstmle")
 ```
 
 -->
-
-------------------------------------------------------------------------
-
-Issues
-------
-
-If you encounter any bugs or have any specific feature requests, please [file an issue](https://github.com/podTockom/tstmle/issues).
 
 ------------------------------------------------------------------------
 
@@ -118,6 +115,13 @@ res$tmlePsi
 
 ------------------------------------------------------------------------
 
+Issues
+------
+
+If you encounter any bugs or have any specific feature requests, please [file an issue](https://github.com/podTockom/tstmle/issues).
+
+------------------------------------------------------------------------
+
 License
 -------
 
@@ -153,5 +157,3 @@ References
 ----------
 
 Malenica, Ivana, and Mark J van der Laan. 2018. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
-
-van der Laan, Mark J, and Ivana Malenica. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”

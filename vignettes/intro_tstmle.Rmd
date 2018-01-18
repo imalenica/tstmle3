@@ -36,7 +36,16 @@ Current implementation supports iterative TMLE, but future releases will support
 
 ## General methodology
 
+Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables $O(1), \dots O(N)$ where each $O(t)$ with $t \in \{1, \dots ,N\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the treatment or exposure $A(t)$, outcome of interest $Y(t)$, and possibly other covariates $W(t)$. We define the observed data as $O^N = (O(t) : t = 1, \dots ,N)$, and let $P^N$ denote its probability measure. Let $P_{O(t)|\bar{O}(t-1)}$ be the conditional probability distribution of $O(t)$ given $\bar{O}(t-1)$. 
 
+We impose the conditional (strong) stationarity assumption on the dependent process in question, and limit the statistical model to conditionally stationary distributions in which widely-separated observations are asymptotically independent. In particular, we assume that $P_{O(t)|\bar{O}(t-1)}$ depends on $\bar{O}(t-1)$ through a fixed dimensional summary measure $C_o(t)$, and denote this conditional distribution with $P_{C_o(t)}$. The density $p_{C_o(t)}$ of $P_{C_o(t)}$ with respect to the dominating measure $\mu_{C_o(t)}$ is further parameterized by a common (in time) function $\theta \in \Theta$. In all our examples, we have that $\theta = \bar{p}$, therefore signifying a common conditional density. 
+
+Our statistical model for the time-series is defined as $\mathcal{M}^N = \{P_{\theta}^N : \theta \}$. The smaller statistical model we consider is conditional on the realized summary $C_o(t)$, denoted as $\mathcal{M}(C_o(t)) = \{P_{\theta, C_o(t)} : \theta \}$. This is the considered statistical model for $P_{C_o(t)}$ for a given $C_o(t)$ impled by $\mathcal{M}^N$. 
+
+Further, for a given $C_o(t)$, we define a target parameter mapping as $\Psi_{C_o(t)} : \mathcal{M}(C_o(t)) \rightarrow \mathbb{R}$. Additionally, we define the following target parameter $\Psi^N : \mathcal{M}^N \rightarrow \mathbb{R}$ of the data distribution $P^N \in \mathcal{M}^N$: $$\bar{\Psi}(P_{\theta,C_o(t)}) = \frac{1}{N} \sum_{t=1}^N \Psi_{C_o(t)}(P_{\theta,C_o(t)})$$
+We note that $\bar{\Psi}(P_{\theta,C_o(t)})$ is a data-dependent target parameter, since its value depends on the realized $C_o(t)$ for $t = 1, \dots ,N$.
+
+For details on the appropriate definition and analysis of the TMLE of the general case and specific context-specific parameters described below, we refer the interested reader to @c2. In following sections we explain how to use `tstmle` in a variety of different scenarious, while providing a brief description of the relevant theory. 
 
 ---
 
@@ -60,7 +69,7 @@ suppressMessages(library(tstmle))
 
 ## Input Data
 
-Input data should be a single time-series of arbitrary size. The longer your provided time-series, better the estimation process, just like in the case of $n$ i.i.d. samples (alas, longer computational demand). The input should be $n$ by $1$ \code{data.frame} with row names indicating which node that particular time point belongs to: $W$, $A$, or $Y$. As mentioned in the previous section, $W$ are the set of covariates, $A$ intervention nodes, and $Y$ outcome. The imposed order must be $A$, $Y$, $W$, so that each time point will be a set of $(A,Y,W)$ for $i = 1, ..., n$. Note that W can contain many different covariate nodes. For more details, see the example simulated dataset in the data directory. 
+Input data should be a single time-series of arbitrary size. The longer your provided time-series, better the estimation process, just like in the case of $N$ i.i.d. samples (alas, longer computational demand). The input should be $N$ by $1$ \code{data.frame} with row names indicating which node that particular time point belongs to: $W$, $A$, or $Y$. As mentioned in the previous section, $W$ are the set of covariates, $A$ intervention nodes, and $Y$ outcome. The imposed order must be $A$, $Y$, $W$, so that each time point will be a set of $(A,Y,W)$ for $i = 1, \dots, N$. Note that W can contain many different covariate nodes. For more details, see the example simulated dataset in the data directory. 
 
 ```{r dataFormat, eval=FALSE}
 data("sim_ts_s1")
@@ -69,8 +78,8 @@ head(sim_ts_s1)
 
 ## Context-specific causal effect of a single time point intervention
 
-In this section we examine the effect of a single time-point intervention on a single outcome upstream.
-In particular, we intervene on time point $A(3)$ by setting it equal to $1$ with probability $1$, and examine the expected value of $Y(5)$ under this intervened distribution. This simple example is also a special case of a static intervention on node $A(3)$; we could have specified any probability of success here. In order to save time, for all examples considered here we use a shortened time-series located in the data directory. For estimation purposes, we use 100 Monte Carlo draws to estimate conditional means of $Y_{g^*}(\tau_{g^*})$ and 100 Monte Carlo draws to estimate both $h^*$ and $h$-densities. 
+In this section we examine the context-specific causal effect of a single time point intervention.
+
 
 ```{r SI, eval=FALSE}
 #Load relevant packages:
