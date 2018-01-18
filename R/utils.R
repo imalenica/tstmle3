@@ -126,14 +126,15 @@ extract_val <- function(fold, split_preds) {
 #'
 #' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param Q data.frame containg the relevant outcome and covariates for estimating Q.
+#' @param g data.frame containg the relevant outcome and covariates for estimating g.
 #' @param estQ Q result of \code{initEst} format.
 #' @param estg g result of \code{initEst} format.
 #'
 #
 
-estSplit<-function(folds, Q, estQ, estg){
+estSplit<-function(folds, Q, g, estQ, estg){
 
-  estSplit <- origami::cross_validate(cv_split, folds, Q, estQ, estg, .combine = F)
+  estSplit <- origami::cross_validate(cv_split, folds, Q, g, estQ, estg, .combine = F)
   estSplit$errors<-NULL
 
   estSplit_val<-extract_vals(folds, estSplit)

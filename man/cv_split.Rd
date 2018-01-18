@@ -4,12 +4,14 @@
 \alias{cv_split}
 \title{Split-specific predictions}
 \usage{
-cv_split(fold, data, estQ, estg)
+cv_split(fold, Q, g, estQ, estg)
 }
 \arguments{
 \item{fold}{one of the folds from the folds object.}
 
-\item{data}{data.frame object containing the time series with C_o as the relevant covariates.}
+\item{Q}{data.frame object for Q containing the time series with C_o as the relevant covariates.}
+
+\item{g}{data.frame object for g containing the time series with C_o as the relevant covariates.}
 
 \item{estQ}{object of class \code{initEst} with \code{sl3} results for Q.}
 

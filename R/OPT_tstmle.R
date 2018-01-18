@@ -83,7 +83,7 @@ tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
 
   #Split-specific predictions:
   message("Generating split-specific predictions")
-  estSplt<-estSplit(folds, Q, estQ, estg)
+  estSplt<-estSplit(folds, Q, g, estQ, estg)
 
   #Fit blip:
   message("Fitting the blip function")

@@ -3,7 +3,7 @@
 R/`tstmle`
 ==========
 
-[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/tstmle/master.svg)](https://codecov.io/github/podTockom/tstmle?branch=master) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Data-adaptive Estimation and Inference for Causal Effects with a Single Time Series
 
@@ -12,7 +12,7 @@ R/`tstmle`
 What's `tstmle`?
 ----------------
 
-![ts\_plot.png](~/Dropbox/Berkeley_Projects/Software/tstmle/sandbox/ts_plot.png)
+include\_graphics("~/Dropbox/Berkeley\_Projects/Software/tstmle/sandbox/ts\_plot.png")
 
 The `tstmle` package implements targeted maximum likelihood estimation (TMLE) of several causal effects based on the observation of a single time series. We consider the case where we observe a single sequence of dependent random variables *O*(1),…*O*(*n*), where each *O*(*t*) with *t* ∈ {1, …*n*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the exposure *A*(*t*), outcome *Y*(*t*), and the covariate vector *W*(*t*).
 

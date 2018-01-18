@@ -1,0 +1,107 @@
+---
+title: "Robust Estimation and Inference of Context-Specific Causal Effects based on Observing a Single Time-Series"
+author: "Ivana Malenica"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: intro_tstmle.bib
+vignette: >
+  %\VignetteIndexEntry{Robust Estimation and Inference of Context-Specific Causal Effects based on Observing a Single Time-Series}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE}
+options(warn = FALSE)
+```
+
+## Introduction
+
+While studying time-series data, one might be interested what the mean of an outcome at time $\tau$ would have been had we intervened on some of the treatment nodes in the observed time-series. We refer to such a parameter as the marginal parameter, as it reflects the marginal distribution of counterfactual outcomes. We note that the marginal time-series parameter for all binary nodes is implemented in [tstmle01](https://github.com/podTockom/tstmle01/).  
+
+Investigation of the properties of the marginal parameter lead to the conclussion that it cannot be estimated in a double robust manner, however [@c1]. In particular, the asymptotic normality of the marginal paramater relies on a consistent estimation of the whole mechanism of the time-series. Therefore, even for important scenarious where treatment nodes are randomly assigned, the inference still relies on consistent (at rate) estimation of the conditional distributions of the covariate and outcome nodes. 
+
+This raises an important question: are there time-series causal parameters for which we have robust inference when the treatment is known? In light of that, we propose a class of statistical target parameters defined as the average over time $t$ of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series. The `tstmle` package implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization. For the interested reader, we refer to [@c2] for the theorems establishing the asymptotic consistency and normality of the targeted maximum likelihood estimator (TMLE) of these causal parameters. 
+
+In particular, `tstmle` implements 3 different context-specific parameters:
+
+1. Average over time of context-specific causal effect of a single time point intervention. 
+
+2. Average over time of context-specific causal effect of multiple time point interventions.
+
+3. Adaptive design learning the optimal individualized rule within a single time-series.
+
+Current implementation supports iterative TMLE, but future releases will support one-step and online TMLE as well [@c3], [@c4]. 
+
+---
+
+## General methodology
+
+
+
+---
+
+## Installing and loading the package 
+
+In the following sections, we examine the use of `tstmle` in a variety of simple examples. The package can be installed as follows:
+
+```{r install_pkg, eval=FALSE}
+if (!("tstmle" %in% installed.packages())) {
+  devtools::install_github("podTockom/tstmle")
+}
+```
+
+Once the package is installed, we can load it using the following command:
+
+```{r load_pkg, eval=FALSE}
+suppressMessages(library(tstmle))
+```
+
+---
+
+## Input Data
+
+Input data should be a single time-series of arbitrary size. The longer your provided time-series, better the estimation process, just like in the case of $n$ i.i.d. samples (alas, longer computational demand). The input should be $n$ by $1$ \code{data.frame} with row names indicating which node that particular time point belongs to: $W$, $A$, or $Y$. As mentioned in the previous section, $W$ are the set of covariates, $A$ intervention nodes, and $Y$ outcome. The imposed order must be $A$, $Y$, $W$, so that each time point will be a set of $(A,Y,W)$ for $i = 1, ..., n$. Note that W can contain many different covariate nodes. For more details, see the example simulated dataset in the data directory. 
+
+```{r dataFormat, eval=FALSE}
+data("sim_ts_s1")
+head(sim_ts_s1)
+```
+
+## Context-specific causal effect of a single time point intervention
+
+In this section we examine the effect of a single time-point intervention on a single outcome upstream.
+In particular, we intervene on time point $A(3)$ by setting it equal to $1$ with probability $1$, and examine the expected value of $Y(5)$ under this intervened distribution. This simple example is also a special case of a static intervention on node $A(3)$; we could have specified any probability of success here. In order to save time, for all examples considered here we use a shortened time-series located in the data directory. For estimation purposes, we use 100 Monte Carlo draws to estimate conditional means of $Y_{g^*}(\tau_{g^*})$ and 100 Monte Carlo draws to estimate both $h^*$ and $h$-densities. 
+
+```{r SI, eval=FALSE}
+#Load relevant packages:
+library(sl3)
+library(origami)
+
+#Load the data:
+data("sim_ts_s1_n50")
+
+#Set library:
+Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+
+#Obtain estimates:
+res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+
+#TMLE:
+res$tmlePsi
+#IPTW:
+res$iptwPsi
+
+```
+
+
+## Session Information
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
+
+---
+
+## References
+

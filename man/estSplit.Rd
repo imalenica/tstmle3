@@ -4,12 +4,14 @@
 \alias{estSplit}
 \title{Wrapper for split-specific predictions}
 \usage{
-estSplit(folds, Q, estQ, estg)
+estSplit(folds, Q, g, estQ, estg)
 }
 \arguments{
 \item{folds}{user-specified list of folds. It should correspond to an element of \code{origami}.}
 
 \item{Q}{data.frame containg the relevant outcome and covariates for estimating Q.}
+
+\item{g}{data.frame containg the relevant outcome and covariates for estimating g.}
 
 \item{estQ}{Q result of \code{initEst} format.}
 
