@@ -72,6 +72,7 @@ tmleOPT <- function(tmledata, maxIter=1000, Qbounds=c(1e-4,1-1e-4)){
 #' \item{tmleCI}{Confidence interval of the context-specific mean of the outcome under
 #' user-specified \code{ruleA} estimated using TMLE methodology.}
 #' \item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.}
+#' \item{rule}{Used rule for the exposure.}
 #' \item{steps}{Number of steps until convergence of the iterative TMLE.}
 #' \item{initialData}{Initial estimates of g and Q, and observed A and Y.}
 #' \item{tmleData}{Final updates estimates of g, Q and clever covariates.}
@@ -105,7 +106,12 @@ ruletmle<-function(obsA,obsY,pA1,Q0W,Q1W,ruleA,maxIter=1000,Qbounds=c(1e-4,1-1e-
   lower <- psi - stats::qnorm(0.975) * sd
   upper <- psi + stats::qnorm(0.975) * sd
 
-  return(list(tmlePsi=psi, tmleSD=sd, tmleCI=c(lower,upper),
+  #Get used rule:
+  if(length(ruleA)==1){
+    ruleA<-rep(ruleA,nrow(tmledata))
+  }
+
+  return(list(tmlePsi=psi, tmleSD=sd, tmleCI=c(lower,upper), rule=ruleA,
               IC=res$IC, steps=res$steps, initialData=tmledata, tmleData=res$tmledata,all=res))
 }
 

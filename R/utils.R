@@ -209,6 +209,11 @@ extract_res<-function(res){
   IC<-data.frame(do.call("cbind", IC))
   names(IC)<-c("A=0","A=1","A=A","A=optA")
 
+  #Extract rule:
+  rule<-lapply(seq_len(4), function(x) {res[[x]]$rule})
+  rule<-data.frame(do.call("cbind", rule))
+  names(rule)<-c("A=0","A=1","A=A","A=optA")
+
   #Extract number of steps until convergence:
   steps <- data.frame(unlist(lapply(seq_len(4), function(x) {res[[x]]$steps})))
   row.names(steps)<-c("A=0","A=1","A=A","A=optA")
@@ -226,7 +231,11 @@ extract_res<-function(res){
   all<-lapply(seq_len(4), function(x) {res[[x]]$all})
   names(all)<-c("rule0","rule1","ruleA","ruleOpt")
 
-  return(list(tmlePsi=psi,tmleSD=sd,tmleCI=CI,IC=IC,steps=steps,initialData=initialData,
+  return(list(tmlePsi=psi,tmleSD=sd,tmleCI=CI,IC=IC,rule=rule,steps=steps,initialData=initialData,
               tmleData=tmleData,all=all))
 
 }
+
+
+
+

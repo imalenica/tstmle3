@@ -35,6 +35,7 @@ user-specified \code{ruleA} estimated using TMLE methodology.}
 \item{tmleCI}{Confidence interval of the context-specific mean of the outcome under
 user-specified \code{ruleA} estimated using TMLE methodology.}
 \item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.}
+\item{rule}{Used rule for the exposure.}
 \item{steps}{Number of steps until convergence of the iterative TMLE.}
 \item{initialData}{Initial estimates of g and Q, and observed A and Y.}
 \item{tmleData}{Final updates estimates of g, Q and clever covariates.}

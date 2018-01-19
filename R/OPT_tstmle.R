@@ -32,6 +32,7 @@
 #' optimal regime, observed exposure, A=1 and A=0.}
 #' \item{IC}{Influence curve for the context-specific parameter under user-specified \code{ruleA}.
 #' It returns IC under the optimal regime, observed exposure, A=1 and A=0.}
+#' \item{rule}{Used rule for the exposure.}
 #' \item{steps}{Number of steps until convergence of the iterative TMLE for each rule.}
 #' \item{initialData}{Initial estimates of g and Q, and observed A and Y.}
 #' \item{tmleData}{Final updates estimates of g, Q and clever covariates.}
@@ -102,7 +103,7 @@ tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
   res_fin<-extract_res(res)
 
   return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
-              IC=res_fin$IC,steps=res_fin$steps,initialData=res_fin$initialData,
+              IC=res_fin$IC,rule=res_fin$rule,steps=res_fin$steps,initialData=res_fin$initialData,
               tmleData=res_fin$tmleData,all=res_fin$all))
 
 }
