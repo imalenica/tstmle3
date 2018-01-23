@@ -6,10 +6,9 @@ if (FALSE) {
   getwd()
   library("devtools")
   document()
-  load_all("./")  # load all R files in /R and datasets in /data. Ignores NAMESPACE:
-  # devtools::check() # runs full check
+  load_all("./")
   setwd("..")
-  install("tstmle", build_vignettes = FALSE, dependencies = FALSE)  # INSTALL W/ devtools:
+  install("tstmle", build_vignettes = FALSE, dependencies = FALSE)
 }
 
 library(testthat)

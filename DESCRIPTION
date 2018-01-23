@@ -17,7 +17,8 @@ Imports:
     Hmisc,
     nnls,
     PerformanceAnalytics,
-    xts
+    xts,
+    plyr
 Suggests:
     testthat,
     knitr,

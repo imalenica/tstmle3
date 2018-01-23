@@ -133,6 +133,115 @@ initFrame <- function(data, Cy, Ca){
 
 }
 
+#' Make initial dataframe for multiple intervention setting
+#'
+#' Function to create the initial data.frame \code{sl3} would expect with i.i.d data.
+#' The newly created data will rely on the specified Cl and Ca, as well as on the size of the O(t)
+#' block.
+#'
+#' @param data data.frame object containing the time series with relevant time ordering.
+#' @param Co numeric specifying possible Markov order for the O(t) nodes.
+#' @param block size of the new O(t) block: multiple of the original O(t). Default of 1 will give the
+#' original time-series data-frame.
+#'
+#' @return An object of class \code{tstmle}.
+#' \describe{
+#' \item{final}{Final dataset with each list component representing a data set with targeted node
+#' list of covariates as specified by Co and batch t.}
+#' \item{original}{Final dataset with each list component representing a data set with targeted node
+#' list of covariates as specified by Co.}
+#' }
+#'
+#' @importFrom Hmisc Lag
+#' @importFrom stats complete.cases
+#' @importFrom plyr ldply
+#'
+#' @export
+#
+
+initFrame_mi <- function(data, Co, block=1){
+
+  # How many in a single, initial batch:
+  step <- length(grep("_1$", row.names(data), value = TRUE))
+  name<-row.names(data)
+
+  #Cardinality of the newly created block:
+  card<-block*step
+
+  #Determine block-specific Co:
+  res_Co <- lapply(seq_len(Co)+card, function(x) {
+    Hmisc::Lag(data[, 1], x)
+  })
+
+  res_Co <- data.frame(matrix(unlist(res_Co), nrow = length(res_Co[[1]])),
+                      stringsAsFactors = FALSE)
+  data_full_Co <- cbind.data.frame(data = data, res_Co)
+
+  #Start will depend on the dimension of Co
+  #Keep only samples that have full history
+  cc <- stats::complete.cases(data_full_Co)
+  data_full_Co <- data_full_Co[cc, ]
+
+  #Define Co:
+  #it will be defined by the lags of A, since they are the first ones in the new batch.
+  #it also represent the closest history.
+  Co_data<-data_full_Co[grep("A", row.names(data_full_Co), value = TRUE), ]
+  first_batch<-row.names(Co_data)[1]
+
+  #Time-series data used for estimation will start at first_batch:
+  data_new<-data.frame(data=data[which(row.names(data) == first_batch):nrow(data),1,drop=FALSE])
+
+  r<-NULL
+  for(i in 1:(nrow(data_new)/card)){
+    rn<-data.frame(rep(i,card))
+    r<-rbind.data.frame(r,rn)
+  }
+  names(r)<-"batch"
+
+  data_new<-data.frame(data=data_new[1:nrow(r),,drop=FALSE])
+  data_new<-cbind.data.frame(data_new,batch=r)
+
+  #Separate by the size of a batch
+  batches<-split(data_new, data_new$batch, drop = TRUE)
+
+  #Lag prior values within the batch
+  for(i in 1:length(batches)){
+    res_batches <- lapply(seq_len(card)-1, function(x) {
+      Hmisc::Lag(batches[[i]]$data, x)
+    })
+
+    res_batches <- data.frame(matrix(unlist(res_batches), nrow = length(res_batches)),
+                         stringsAsFactors = FALSE)
+    batches[[i]] <- cbind.data.frame(batches[[i]], res_batches)
+  }
+
+  data_comb<-plyr::ldply(batches, data.frame)
+  row.names(data_comb)<-row.names(data_new)
+
+  #Separate by process and batch:
+  data_comb$.id<-rep(seq_len(card),nrow(data_comb)/card)
+  data_orig<-split(data_comb, data_comb$.id, drop = TRUE)
+
+  #Create Co based on the first A of each batch:
+  Co_names<-row.names(data_orig[[1]])
+  Co_fin<-Co_data[match(Co_names, row.names(Co_data)),]
+  names(Co_fin)<-c("original", paste("Co",1:Co, sep ="_"))
+
+  #Make output prettier:
+  data_final<-lapply(1:length(data_orig), function(x){
+    #Remove unnecessary columns
+    data_orig[[x]]<-data_orig[[x]][,-c(1,2,3)]
+    data_orig[[x]][sapply(data_orig[[x]], function(t) all(is.na(t)))] <- NULL
+
+    #Add Co columns:
+    data_orig[[x]]<-cbind.data.frame(data_orig[[x]],Co_fin[,-1])
+  })
+
+  out <- list(final=data_final, original=data_orig)
+  return(out)
+
+}
+
 #' Fit Q with specified exposure
 #'
 #' Function to make estimation of Q with specified exposure easier.
