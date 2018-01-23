@@ -14,8 +14,8 @@ plot_OPT <- function(res) {
   all<-cbind.data.frame(Psi=res$tmlePsi,sd=res$tmleSD,lower=res$tmleCI$lower,
                         upper=res$tmleCI$upper)
 
-  ggplot(all, aes(y = row.names(all), x = Psi, xmin = lower,
-                  xmax = upper)) + geom_point() + geom_errorbarh() + ylab("Rule")
+  ggplot2::ggplot(all, aes(y = row.names(all), x = Psi, xmin = lower,
+                  xmax = upper)) + ggplot2::geom_point() + ggplot2::geom_errorbarh() + ylab("Rule")
 }
 
 #' Plot for a single time-series

@@ -15,7 +15,9 @@ Imports:
     origami,
     sl3,
     Hmisc,
-    nnls
+    nnls,
+    PerformanceAnalytics,
+    xts
 Suggests:
     testthat,
     knitr,

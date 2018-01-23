@@ -45,7 +45,7 @@ Our statistical model for the time-series is defined as $\mathcal{M}^N = \{P_{\t
 Further, for a given $C_o(t)$, we define a target parameter mapping as $\Psi_{C_o(t)} : \mathcal{M}(C_o(t)) \rightarrow \mathbb{R}$. Additionally, we define the following target parameter $\Psi^N : \mathcal{M}^N \rightarrow \mathbb{R}$ of the data distribution $P^N \in \mathcal{M}^N$: $$\bar{\Psi}(P_{\theta,C_o(t)}) = \frac{1}{N} \sum_{t=1}^N \Psi_{C_o(t)}(P_{\theta,C_o(t)})$$
 We note that $\bar{\Psi}(P_{\theta,C_o(t)})$ is a data-dependent target parameter, since its value depends on the realized $C_o(t)$ for $t = 1, \dots ,N$.
 
-For details on the appropriate definition and analysis of the TMLE of the general case and specific context-specific parameters described below, we refer the interested reader to @c2. In following sections we explain how to use `tstmle` in a variety of different scenarious, while providing a brief description of the relevant theory. 
+For details on the appropriate definition and analysis of the TMLE of the general case and specific context-specific parameters described below, we refer the interested reader to @c2. In following sections we explain how to use `tstmle` in a variety of different scenarious, while providing a brief description of the relevant theory. Details on each of the target parameter, as well as the proofs regarding their favorable statistical properties can be found in @c2.
 
 ---
 
@@ -74,12 +74,25 @@ Input data should be a single time-series of arbitrary size. The longer your pro
 ```{r dataFormat, eval=FALSE}
 data("sim_ts_s1")
 head(sim_ts_s1)
+
+#We can plot the data using the following commands:
+plot_ts(sim_ts_s1)
+plot_ts(sim_ts_s1, plot = "pa")
 ```
 
-## Context-specific causal effect of a single time point intervention
+##1. Context-specific causal effect of a single time point intervention
 
-In this section we examine the context-specific causal effect of a single time point intervention.
+In this section we examine the causal effect of a single time-point intervention on the next outcome. As previously described, the observed data is of the form: $$O(t) = (A(t),Y(t),W(t))$$ for $t= 1, \dots, N$ where $A(t) \in \{0,1\}$ is a binary treatment, $Y(t)$ is a subsequent outcome (binary, in the following example), and finally $W(t)$ is all other information collected after the exposure node $A(t)$. In the example below, $W(t)$ is consisted of 3 covariates, either categorical or continuous. 
 
+As described in the previous section, we still have that $P_{O(t)|\bar{O}(t-1)}$ depends on $\bar{O}(t-1)$ through a fixed dimensional summary measure $C_o(t)$. However, we notice that the density $p_{C_o(t)}(a(t), y(t), w(t) | C_o(t))$ factorizes in 3 conditional densities for $A(t)$, $Y(t)$ and $W(t)$, which we denote as $g_{a(t)}$, $q_{y(t)}$ and $q_{w(t)}$. We denote $C_a(t) = C_o(t)$ and $C_y(t) = (C_o(t),A(t))$ as the corresponding relevant histories. The strong conditonal stationarity assumption is now imposed on only $g_{a(t)}$ and $q_{y(t)}$, defining $\bar{g}(a(t)|C_o(t))$ and $\bar{q}_y(y(t)|C_o(t),a(t))$ for the common functions $\bar{g}$ and $\bar{q}_y$. Therefore, we have that: $$p_{C_o(t)}(a,y,w) = \bar{g}(a|C_a(t)) \bar{q}_y(y|C_y(t)) q_{w(t)}(w|C_w(t))$$ we make no assumptions on $\bar{g}$, $\bar{q}_y$ and $q_{w(t)}$. Since the efficient influence curve is not affected by $q_{w(t)}$, we define $\theta = (\bar{g},\bar{q}_{y})$. We define a target parameter $\Psi_{C_o(t)} : \mathcal{M}^N \rightarrow \mathbb{R}$ as: $$\frac{1}{N}\sum_{t=1}^N \mathbb{E}(Y(t)|C_o(t),A(t)=1) -\mathbb{E}(Y(t)|C_o(t),A(t)=0)$$
+
+In `tstmle`, \code{tstmleSI} is the main function performing both the initial estimation and the targeting step for the above defined parameter. The basic usage requires the data in the formal described in the Input Data section, as well as specification of the relevant dimensions of $C_a$ and $C_y$. Dimensions of $C_a$ and $C_y$ tell \code{tstmleSI} how far in the past to look for dependence. In addition, one can specify as rich of a Super Learner library as one wishes, and provides options regarding the cross-validation scheme. 
+
+The final result of \code{tstmleSI} includes:
+
+- Average over time of context-specific causal effect of single time-point intervention estimated using TMLE and IPTW.
+
+- Relavent inference for the TMLE estimate, including the standard deviation, confidence interval, and the estimated influence function. 
 
 ```{r SI, eval=FALSE}
 #Load relevant packages:
@@ -94,14 +107,30 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3, Q_library, g_library)
 
 #TMLE:
 res$tmlePsi
+
 #IPTW:
 res$iptwPsi
 
 ```
+
+##2. Context-specific causal effect of multiple time point interventions
+
+In this section we extend the methodology described in section 1 to cover multiple time point interventions. We define: $$O(t) = (A(t,0), L(t,1), A(t,1), L(t,2), \dots, L(t,K), A(t,K), L(t,K+1))$$ to be an ordered longitudinal structure within time point $t$. We note that $A(t,j)$ is an intervention node (treatment/censoring) and $L(t,j+1)$ is a vector of subsequent time-dependent covariates and outcomes at time $j$ within $t$, for $t = 1, \dots, N$. The blocks $O(t)$ could have been artificially created for the purpose of estimation of a particular causal effect, but it could also be the case that we truly observe a unique experiment over a time block $t$ in which the treatment and covariate nodes have a special meaning. For example, the measurements in $O(t)$ might correspond to a sequence of unique actions and measurments on a day/cycle/period $t$, so that only $A(t,j)$ and $L(t,j)$ across $t$ for a fixed $j$ are measuring the same $j$-specific variable at time $t$.
+
+As before, we define fixed dimensional relevant histories for conditional densities of $A(t,j)$ and $L(t,j)$ as $C_l(t,j) = (L(t, 1: j-1), A(t, 1:j-1), c_o(t))$ and $C_a(t,j) = (L(t, 1: j), A(t, 1:j-1), c_o(t))$. Our time-series model assumes that $q_{t,j}$ is described by a common (in time $t$) $\bar{q}_j$, for $j = 1, \dots, K+1$. Further, we partiton the indices $\{1, \dots, K\}$ for the intervention nodes into two disjoint sets $\mathcal{A}_1$ and $\mathcal{A}_2$. We note that for $j \in \mathcal{A}_1$ the intervention mechanism $g_{t,j}$ for generating $A(t,j)$ is known for each $t$. For $j \in \mathcal{A}_2$, we assume that $g_{t,j}$ for generating $A(t,j)$ is described by a common (in time $t$) $\bar{g}_j$. With this in mind, we write the density of $p_{c_o(t)}$ as follows: $$p_{c_o(t),\bar{q},\bar{g}}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We define $\bar{g}^*$ as a user-supplied stochastic intervention. Therefore, for a given $\bar{g}^*=(\bar{g}^*_j : j=1, \dots, K)$ of conditional densities of $A(t,j)$ given a summary measure $C_a^*(t,j)$, we define the post-intervnetion distribution of $O(t)$ given $C_o(t)$ if $A(t,j)$ are subjected to the intervention $\bar{g}^*_j$, for $j = 1, \dots, K$: $$p_{c_o(t),\bar{q},\bar{g}^*}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g^*_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We note that the stochastic intervention choice $\bar{g}^*$ is itself a conditional distribution given $C_o(t)$. 
+
+In conculsion, we define the $C_o(t)$-specific counterfactual mean under stochastic intervention. In particular, we define $Y(t)$ to be a real valued function of $L(t,K+1)$, which represents the outcome of interest for the $C_o(t)$-specific experiment. Let $Y_{\bar{g}^*}(t)$ be the random variable of $Y(t)$ under the post-intervention distribution $p_{C_o(t),\bar{q},\bar{g}^*}$. Therefore we have that our target parameter is: $$\Psi_{C_o(t)}(P_{C_o(t),\bar{q},\bar{g}}) = E_{P_{C_o(t),\bar{q},\bar{g}^*}} Y_{\bar{g}^*}(t)$$ 
+
+
+
+##3. Adaptive design learning the optimal individualized rule within a single time-series
+
+
+
 
 
 ## Session Information
