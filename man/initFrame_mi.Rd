@@ -17,10 +17,14 @@ original time-series data-frame.}
 \value{
 An object of class \code{tstmle}.
 \describe{
+\item{Y}{data set containing the \code{sl3} ready input for the output and relevant covariates.}
+\item{A}{data set containing the \code{sl3} ready input for all the exposures and relevant covariates.}
 \item{final}{Final dataset with each list component representing a data set with targeted node
 list of covariates as specified by Co and batch t.}
 \item{original}{Final dataset with each list component representing a data set with targeted node
 list of covariates as specified by Co.}
+\item{step}{Number of nodes in an initial batch.}
+\item{card}{Cardinality of the newly created block.}
 }
 }
 \description{

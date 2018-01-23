@@ -146,10 +146,14 @@ initFrame <- function(data, Cy, Ca){
 #'
 #' @return An object of class \code{tstmle}.
 #' \describe{
+#' \item{Y}{data set containing the \code{sl3} ready input for the output and relevant covariates.}
+#' \item{A}{data set containing the \code{sl3} ready input for all the exposures and relevant covariates.}
 #' \item{final}{Final dataset with each list component representing a data set with targeted node
 #' list of covariates as specified by Co and batch t.}
 #' \item{original}{Final dataset with each list component representing a data set with targeted node
 #' list of covariates as specified by Co.}
+#' \item{step}{Number of nodes in an initial batch.}
+#' \item{card}{Cardinality of the newly created block.}
 #' }
 #'
 #' @importFrom Hmisc Lag
@@ -165,8 +169,19 @@ initFrame_mi <- function(data, Co, block=1){
   step <- length(grep("_1$", row.names(data), value = TRUE))
   name<-row.names(data)
 
+  #Get initial batch:
+  name_ib<-row.names(data)[1:step]
+  nY<-step-which(name_ib=="Y_0")
+  nA<-which(name_ib=="A_0")
+
   #Cardinality of the newly created block:
   card<-block*step
+
+  #Final Y in a block:
+  fY<-card-nY
+
+  #Indices for A processes:
+  iA<-seq(from=nA,to=card,by = step)
 
   #Determine block-specific Co:
   res_Co <- lapply(seq_len(Co)+card, function(x) {
@@ -237,7 +252,8 @@ initFrame_mi <- function(data, Co, block=1){
     data_orig[[x]]<-cbind.data.frame(data_orig[[x]],Co_fin[,-1])
   })
 
-  out <- list(final=data_final, original=data_orig)
+  out <- list(Y=data_final[[fY]],A=data_final[iA],final=data_final,original=data_orig,
+              step=step,card=card)
   return(out)
 
 }

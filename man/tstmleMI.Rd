@@ -4,27 +4,20 @@
 \alias{tstmleMI}
 \title{Context-specific causal effect of multiple time point interventions}
 \usage{
-tstmleMI(data, Co = TRUE, Cl = NULL, Ca = NULL, folds = NULL, V = 5,
+tstmleMI(data, Co = NULL, block = 1, folds = NULL, V = 5,
   stratifyAY = TRUE, Q_library = list("Lrnr_mean", "Lrnr_glm_fast",
   "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), Q_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
-  "Lrnr_expSmooth"), g_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
-  "Lrnr_expSmooth"), gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 -
+  "Lrnr_glmnet"), gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 -
   1e-04), maxIter = 1000, fold_fn = "folds_rolling_origin", window = 1,
   skip = 0)
 }
 \arguments{
 \item{data}{data.frame object containing the time series with relevant time ordering.}
 
-\item{Co}{initial estimates of the parameter can be obtained in two ways: by specifying the Markov
-order for relevant parts of the likelihood, or using \code{sl3} and time-series algorithms
-without having to specify the order. Currently the only option implemented is with \code{Co=TRUE},
-where $\code{Cl} and $\code{Ca} must be specified. Note that they do not have to be exactly correct,
-but give a rought estimate of how deep in the past dependence goes.}
+\item{Co}{numeric specifying possible Markov order for the O(t) nodes.}
 
-\item{Cl}{numeric specifying possible Markov order for Y nodes. It refers to dependence of the L(t) block.}
-
-\item{Ca}{numeric specifying possible Markov order for A nodes. It refers to dependence of the A(t) block.}
+\item{block}{size of the new O(t) block: multiple of the original O(t). Default of 1 will give the
+original time-series data-frame.}
 
 \item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.
 In case it is not specified, it will defined internally.}
@@ -37,30 +30,11 @@ In case it is not specified, it will defined internally.}
 
 \item{g_library}{list of \code{sl3} algorithms for the fit of P(A|Ca) (g)}
 
-\item{Q_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of E(Y|A,Cy) (Q).
-For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
-This option is only relevant if \code{Co=FALSE}.}
-
-\item{g_SLlibrary}{list of \code{sl3} algorithms to be used for estimation of P(A|Ca) (g).
-For the list of available learners for time-series, see \code{sl3::sl3_list_learners()}.
-This option is only relevant if \code{Co=FALSE}.}
-
 \item{gbounds}{bounds for the q estimates.}
 
 \item{Qbounds}{bounds for the Q estimates.}
 
 \item{maxIter}{maximum number of iterations for the iterative TMLE.}
-
-\item{fold_fn}{cross-validation scheme, as defined by \code{origami}. See \code{?origami::fold_funs}
- for detailed explanations. For time-series, implemented cross-validation schemes are
-\code{folds_rolling_origin} and \code{folds_rolling_window}. This option is only relevant if \code{Co=FALSE}.}
-
-\item{window}{in case \code{fold_fn} was set to \code{folds_rolling_window}, specify the
-number of observations in each training sample. This option is only relevant if \code{Co=FALSE}.}
-
-\item{skip}{in case the time-series considered is very long, it is possible there will be many
-folds to consider. This parameter allows for few nodes to be skipped. Default is 0, which
-corresonds to no nodes skipped. This option is only relevant if \code{Co=FALSE}.}
 }
 \value{
 An object of class \code{tstmleSI}.
