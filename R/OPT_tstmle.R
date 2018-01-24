@@ -8,8 +8,6 @@
 #' @param data data.frame object containing the time series with relevant time ordering.
 #' @param Cy numeric specifying possible Markov order for Y nodes.
 #' @param Ca numeric specifying possible Markov order for A nodes.
-#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
-#' In case it is not specified, it will defined internally.
 #' @param V number of cross-validation folds used.
 #' @param stratifyAY logical: should we stratify the cross-validation based on (A,Y) pairs
 #' @param Q_library list of \code{sl3} algorithms for the fit of E(Y|A,Cy) (Q)
@@ -42,7 +40,7 @@
 #' @export
 #
 
-tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
+tstmleOPT <- function(data,Cy=1,Ca=1,V=5,stratifyAY = TRUE,
                      Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      blip_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost"),
@@ -62,15 +60,13 @@ tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
   gX<-data$A[,-1]
 
   #Make folds
-  if (is.null(folds)) {
-    if(stratifyAY){
-      AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
-      #Stratified folds:
-      folds <- origami::make_folds(strata_ids = AYstrata, V = V)
+  if(stratifyAY){
+    AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
+    #Stratified folds:
+    folds <- origami::make_folds(strata_ids = AYstrata, V = V)
     }else{
       folds <- origami::make_folds(QY, V)
     }
-  }
 
   #Fit Q:
   message("Fitting Q")
@@ -85,26 +81,25 @@ tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
   #Split-specific predictions:
   message("Generating split-specific predictions")
   estSplt<-estSplit(folds, Q, g, estQ, estg)
-  return(list(folds=folds,estSplt=estSplt,Q=Q,blip_library=blip_library))
 
   #Fit blip:
-  #message("Fitting the blip function")
-  #estBlp<-estBlip(folds=folds, estSplt=estSplt, Q=Q, blip_library=blip_library)
+  message("Fitting the blip function")
+  estBlp<-estBlip(folds=folds, estSplt=estSplt, Q=Q, blip_library=blip_library)
 
   #Run TMLE for all rules:
-  #res <- with(estSplt$valSplit, {
-  #  rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
-  #  rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
-  #  ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
-  #  ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
-  #  list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
-  #})
+  res <- with(estSplt$valSplit, {
+    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
+    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
+    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
+    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
+    list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
+  })
 
   #Extract psi for each rule:
-  #res_fin<-extract_res(res)
+  res_fin<-extract_res(res)
 
-  #return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
-  #            IC=res_fin$IC,rule=res_fin$rule,steps=res_fin$steps,initialData=res_fin$initialData,
-  #            tmleData=res_fin$tmleData,all=res_fin$all))
+  return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
+              IC=res_fin$IC,rule=res_fin$rule,steps=res_fin$steps,initialData=res_fin$initialData,
+              tmleData=res_fin$tmleData,all=res_fin$all))
 
 }

@@ -100,8 +100,7 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, folds=NULL, 
-              Cy=6, Ca=5, V=10, Q_library, g_library)
+res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, Cy=6, Ca=5, V=10, Q_library, g_library)
 
 #TMLE:
 res$tmlePsi
@@ -121,6 +120,9 @@ suppressMessages(library(tstmle))
 suppressMessages(library(sl3))
 suppressMessages(library(origami))
 
+#set seed:
+set.seed(11)
+
 #Load the data:
 data("sim_ts_s1")
 
@@ -129,8 +131,10 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
+folds<-NULL
+
 #Obtain estimates:
-res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, folds=NULL, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library, gbounds=c(1e-4,1-1e-4), Qbounds=c(1e-4,1-1e-4), maxIter=1000)
+res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
 
 #TMLE:
 res$tmlePsi

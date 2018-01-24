@@ -158,7 +158,6 @@ estSplit<-function(folds, Q, g, estQ, estg){
 #' @param estSplt result object of \code{estSplit}.
 #' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
 #'
-#' @importFrom origami cross_validate
 #' @importFrom stats coef
 #' @importFrom nnls nnls
 #'
@@ -171,7 +170,7 @@ estBlip<-function(folds, estSplt, Q, blip_library){
 
   #Construct SL prediction of the blip:
   #For now, just use non-negative linear least squares.
-  x<-do.call(rbind, estSplt$cvPred)
+  x<-do.call(rbind, blipSplit$cvPred)
   y<-unlist(blipSplit$B)
 
   fit_coef <- stats::coef(nnls::nnls(as.matrix(x), as.matrix(y)))

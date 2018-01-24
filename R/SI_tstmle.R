@@ -12,8 +12,6 @@
 #' but give a rought estimate of how deep in the past dependence goes.
 #' @param Cy numeric specifying possible Markov order for Y nodes.
 #' @param Ca numeric specifying possible Markov order for A nodes.
-#' @param folds user-specified list of folds- it should correspond to an element of \code{origami}.
-#' In case it is not specified, it will defined internally.
 #' @param V number of cross-validation folds used.
 #' @param stratifyAY logical: should we stratify the cross-validation based on (A,Y) pairs
 #' @param Q_library list of \code{sl3} algorithms for the fit of E(Y|A,Cy) (Q)
@@ -53,7 +51,7 @@
 #' @export
 #
 
-tstmleSI <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
+tstmleSI <- function(data,Co=TRUE,Cy=1,Ca=1,V=5,stratifyAY = TRUE,
                      Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
                      Q_SLlibrary=list("Lrnr_mean", "Lrnr_arima", "Lrnr_expSmooth"),
@@ -81,14 +79,12 @@ tstmleSI <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TR
     gX<-data$A[,-1]
 
     #Make folds
-    if (is.null(folds)) {
-      if(stratifyAY){
-        AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
-        #Stratified folds:
-        folds <- origami::make_folds(strata_ids = AYstrata, V = V)
-      }else{
-        folds <- origami::make_folds(QY, V)
-      }
+    if(stratifyAY){
+      AYstrata <- sprintf("%s %s", QX[, 1], QY[, 1])
+      #Stratified folds:
+      folds <- origami::make_folds(strata_ids = AYstrata, V = V)
+    }else{
+      folds <- origami::make_folds(QY, V)
     }
 
     #Fit Q:

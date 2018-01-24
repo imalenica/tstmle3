@@ -4,13 +4,13 @@
 \alias{tstmleSI}
 \title{Context-specific causal effect of single-time point intervention}
 \usage{
-tstmleSI(data, Co = TRUE, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
-  stratifyAY = TRUE, Q_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), Q_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
-  "Lrnr_expSmooth"), g_SLlibrary = list("Lrnr_mean", "Lrnr_arima",
-  "Lrnr_expSmooth"), gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 -
-  1e-04), maxIter = 1000, fold_fn = "folds_rolling_origin", window = 1,
+tstmleSI(data, Co = TRUE, Cy = 1, Ca = 1, V = 5, stratifyAY = TRUE,
+  Q_library = list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
+  g_library = list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
+  Q_SLlibrary = list("Lrnr_mean", "Lrnr_arima", "Lrnr_expSmooth"),
+  g_SLlibrary = list("Lrnr_mean", "Lrnr_arima", "Lrnr_expSmooth"),
+  gbounds = c(1e-04, 1 - 1e-04), Qbounds = c(1e-04, 1 - 1e-04),
+  maxIter = 1000, fold_fn = "folds_rolling_origin", window = 1,
   skip = 0)
 }
 \arguments{
@@ -25,9 +25,6 @@ but give a rought estimate of how deep in the past dependence goes.}
 \item{Cy}{numeric specifying possible Markov order for Y nodes.}
 
 \item{Ca}{numeric specifying possible Markov order for A nodes.}
-
-\item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.
-In case it is not specified, it will defined internally.}
 
 \item{V}{number of cross-validation folds used.}
 

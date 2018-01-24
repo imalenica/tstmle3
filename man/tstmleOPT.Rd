@@ -4,12 +4,12 @@
 \alias{tstmleOPT}
 \title{Context-specific optimal treatment effect for a single time series}
 \usage{
-tstmleOPT(data, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
-  stratifyAY = TRUE, Q_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), g_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet"), blip_library = list("Lrnr_mean", "Lrnr_glm_fast",
-  "Lrnr_glmnet", "Lrnr_randomForest", "Lrnr_xgboost"), gbounds = c(1e-04, 1 -
-  1e-04), Qbounds = c(1e-04, 1 - 1e-04), maxIter = 1000)
+tstmleOPT(data, Cy = 1, Ca = 1, V = 5, stratifyAY = TRUE,
+  Q_library = list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
+  g_library = list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet"),
+  blip_library = list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet",
+  "Lrnr_randomForest", "Lrnr_xgboost"), gbounds = c(1e-04, 1 - 1e-04),
+  Qbounds = c(1e-04, 1 - 1e-04), maxIter = 1000)
 }
 \arguments{
 \item{data}{data.frame object containing the time series with relevant time ordering.}
@@ -17,9 +17,6 @@ tstmleOPT(data, Cy = NULL, Ca = NULL, folds = NULL, V = 5,
 \item{Cy}{numeric specifying possible Markov order for Y nodes.}
 
 \item{Ca}{numeric specifying possible Markov order for A nodes.}
-
-\item{folds}{user-specified list of folds- it should correspond to an element of \code{origami}.
-In case it is not specified, it will defined internally.}
 
 \item{V}{number of cross-validation folds used.}
 
