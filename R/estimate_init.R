@@ -252,6 +252,9 @@ initFrame_mi <- function(data, Co, block=1){
     data_orig[[x]]<-cbind.data.frame(data_orig[[x]],Co_fin[,-1])
   })
 
+  #Simple data transformation for ltmle
+
+
   out <- list(Y=data_final[[fY]],A=data_final[iA],final=data_final,original=data_orig,
               step=step,card=card)
   return(out)

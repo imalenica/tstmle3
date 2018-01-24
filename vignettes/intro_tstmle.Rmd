@@ -18,7 +18,7 @@ options(warn = FALSE)
 
 While studying time-series data, one might be interested what the mean of an outcome at time $\tau$ would have been had we intervened on some of the treatment nodes in the observed time-series. We refer to such a parameter as the marginal parameter, as it reflects the marginal distribution of counterfactual outcomes. We note that the marginal time-series parameter for all binary nodes is implemented in [tstmle01](https://github.com/podTockom/tstmle01/).  
 
-Investigation of the properties of the marginal parameter lead to the conclussion that it cannot be estimated in a double robust manner, however [@c1]. In particular, the asymptotic normality of the marginal paramater relies on a consistent estimation of the whole mechanism of the time-series. Therefore, even for important scenarious where treatment nodes are randomly assigned, the inference still relies on consistent (at rate) estimation of the conditional distributions of the covariate and outcome nodes. 
+Investigation of the properties of the marginal parameter lead to the conclusion that it cannot be estimated in a double robust manner, however [@c1]. In particular, the asymptotic normality of the marginal parameter relies on a consistent estimation of the whole mechanism of the time-series. Therefore, even for important scenarios where treatment nodes are randomly assigned, the inference still relies on consistent (at rate) estimation of the conditional distributions of the covariate and outcome nodes. 
 
 This raises an important question: are there time-series causal parameters for which we have robust inference when the treatment is known? In light of that, we propose a class of statistical target parameters defined as the average over time $t$ of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series. The `tstmle` package implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization. For the interested reader, we refer to [@c2] for the theorems establishing the asymptotic consistency and normality of the targeted maximum likelihood estimator (TMLE) of these causal parameters. 
 
@@ -40,12 +40,12 @@ Consider the case where one observes a single time-series, denoted as a single s
 
 We impose the conditional (strong) stationarity assumption on the dependent process in question, and limit the statistical model to conditionally stationary distributions in which widely-separated observations are asymptotically independent. In particular, we assume that $P_{O(t)|\bar{O}(t-1)}$ depends on $\bar{O}(t-1)$ through a fixed dimensional summary measure $C_o(t)$, and denote this conditional distribution with $P_{C_o(t)}$. The density $p_{C_o(t)}$ of $P_{C_o(t)}$ with respect to the dominating measure $\mu_{C_o(t)}$ is further parameterized by a common (in time) function $\theta \in \Theta$. In all our examples, we have that $\theta = \bar{p}$, therefore signifying a common conditional density. 
 
-Our statistical model for the time-series is defined as $\mathcal{M}^N = \{P_{\theta}^N : \theta \}$. The smaller statistical model we consider is conditional on the realized summary $C_o(t)$, denoted as $\mathcal{M}(C_o(t)) = \{P_{\theta, C_o(t)} : \theta \}$. This is the considered statistical model for $P_{C_o(t)}$ for a given $C_o(t)$ impled by $\mathcal{M}^N$. 
+Our statistical model for the time-series is defined as $\mathcal{M}^N = \{P_{\theta}^N : \theta \}$. The smaller statistical model we consider is conditional on the realized summary $C_o(t)$, denoted as $\mathcal{M}(C_o(t)) = \{P_{\theta, C_o(t)} : \theta \}$. This is the considered statistical model for $P_{C_o(t)}$ for a given $C_o(t)$ implied by $\mathcal{M}^N$. 
 
 Further, for a given $C_o(t)$, we define a target parameter mapping as $\Psi_{C_o(t)} : \mathcal{M}(C_o(t)) \rightarrow \mathbb{R}$. Additionally, we define the following target parameter $\Psi^N : \mathcal{M}^N \rightarrow \mathbb{R}$ of the data distribution $P^N \in \mathcal{M}^N$: $$\bar{\Psi}(P_{\theta,C_o(t)}) = \frac{1}{N} \sum_{t=1}^N \Psi_{C_o(t)}(P_{\theta,C_o(t)})$$
 We note that $\bar{\Psi}(P_{\theta,C_o(t)})$ is a data-dependent target parameter, since its value depends on the realized $C_o(t)$ for $t = 1, \dots ,N$.
 
-For details on the appropriate definition and analysis of the TMLE of the general case and specific context-specific parameters described below, we refer the interested reader to @c2. In following sections we explain how to use `tstmle` in a variety of different scenarious, while providing a brief description of the relevant theory. Details on each of the target parameter, as well as the proofs regarding their favorable statistical properties can be found in @c2.
+For details on the appropriate definition and analysis of the TMLE of the general case and specific context-specific parameters described below, we refer the interested reader to @c2. In following sections we explain how to use `tstmle` in a variety of different scenarios, while providing a brief description of the relevant theory. Details on each of the target parameter, as well as the proofs regarding their favorable statistical properties can be found in @c2.
 
 ---
 
@@ -84,7 +84,7 @@ plot_ts(sim_ts_s1, plot = "pa")
 
 In this section we examine the causal effect of a single time-point intervention on the next outcome. As previously described, the observed data is of the form: $$O(t) = (A(t),Y(t),W(t))$$ for $t= 1, \dots, N$ where $A(t) \in \{0,1\}$ is a binary treatment, $Y(t)$ is a subsequent outcome (binary, in the following example), and finally $W(t)$ is all other information collected after the exposure node $A(t)$. In the example below, $W(t)$ is consisted of 3 covariates, either categorical or continuous. 
 
-As described in the previous section, we still have that $P_{O(t)|\bar{O}(t-1)}$ depends on $\bar{O}(t-1)$ through a fixed dimensional summary measure $C_o(t)$. However, we notice that the density $p_{C_o(t)}(a(t), y(t), w(t) | C_o(t))$ factorizes in 3 conditional densities for $A(t)$, $Y(t)$ and $W(t)$, which we denote as $g_{a(t)}$, $q_{y(t)}$ and $q_{w(t)}$. We denote $C_a(t) = C_o(t)$ and $C_y(t) = (C_o(t),A(t))$ as the corresponding relevant histories. The strong conditonal stationarity assumption is now imposed on only $g_{a(t)}$ and $q_{y(t)}$, defining $\bar{g}(a(t)|C_o(t))$ and $\bar{q}_y(y(t)|C_o(t),a(t))$ for the common functions $\bar{g}$ and $\bar{q}_y$. Therefore, we have that: $$p_{C_o(t)}(a,y,w) = \bar{g}(a|C_a(t)) \bar{q}_y(y|C_y(t)) q_{w(t)}(w|C_w(t))$$ we make no assumptions on $\bar{g}$, $\bar{q}_y$ and $q_{w(t)}$. Since the efficient influence curve is not affected by $q_{w(t)}$, we define $\theta = (\bar{g},\bar{q}_{y})$. We define a target parameter $\Psi_{C_o(t)} : \mathcal{M}^N \rightarrow \mathbb{R}$ as: $$\frac{1}{N}\sum_{t=1}^N \mathbb{E}(Y(t)|C_o(t),A(t)=1) -\mathbb{E}(Y(t)|C_o(t),A(t)=0)$$
+As described in the previous section, we still have that $P_{O(t)|\bar{O}(t-1)}$ depends on $\bar{O}(t-1)$ through a fixed dimensional summary measure $C_o(t)$. However, we notice that the density $p_{C_o(t)}(a(t), y(t), w(t) | C_o(t))$ factorizes in 3 conditional densities for $A(t)$, $Y(t)$ and $W(t)$, which we denote as $g_{a(t)}$, $q_{y(t)}$ and $q_{w(t)}$. We denote $C_a(t) = C_o(t)$ and $C_y(t) = (C_o(t),A(t))$ as the corresponding relevant histories. The strong conditional stationarity assumption is now imposed on only $g_{a(t)}$ and $q_{y(t)}$, defining $\bar{g}(a(t)|C_o(t))$ and $\bar{q}_y(y(t)|C_o(t),a(t))$ for the common functions $\bar{g}$ and $\bar{q}_y$. Therefore, we have that: $$p_{C_o(t)}(a,y,w) = \bar{g}(a|C_a(t)) \bar{q}_y(y|C_y(t)) q_{w(t)}(w|C_w(t))$$ we make no assumptions on $\bar{g}$, $\bar{q}_y$ and $q_{w(t)}$. Since the efficient influence curve is not affected by $q_{w(t)}$, we define $\theta = (\bar{g},\bar{q}_{y})$. We define a target parameter $\Psi_{C_o(t)} : \mathcal{M}^N \rightarrow \mathbb{R}$ as: $$\frac{1}{N}\sum_{t=1}^N \mathbb{E}(Y(t)|C_o(t),A(t)=1) -\mathbb{E}(Y(t)|C_o(t),A(t)=0)$$
 
 In `tstmle`, \code{tstmleSI} is the main function performing both the initial estimation and the targeting step for the above defined parameter. The basic usage requires the data in the formal described in the Input Data section, as well as specification of the relevant dimensions of $C_a$ and $C_y$. Dimensions of $C_a$ and $C_y$ tell \code{tstmleSI} how far in the past to look for dependence. In addition, one can specify as rich of a Super Learner library as one wishes, and provides options regarding the cross-validation scheme. 
 
@@ -92,7 +92,7 @@ The final result of \code{tstmleSI} includes:
 
 - Average over time of context-specific causal effect of single time-point intervention estimated using TMLE and IPTW.
 
-- Relavent inference for the TMLE estimate, including the standard deviation, confidence interval, and the estimated influence function. 
+- Relevant inference for the TMLE estimate, including the standard deviation, confidence interval, and the estimated influence function. 
 
 ```{r SI, eval=FALSE}
 #Load relevant packages:
@@ -100,14 +100,14 @@ library(sl3)
 library(origami)
 
 #Load the data:
-data("sim_ts_s1_n50")
+data("sim_ts_s1")
 
 #Set library:
 Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3, Q_library, g_library)
+res<-tstmleSI(sim_ts_s1, Cy=6, Ca=5, V=10, Q_library, g_library)
 
 #TMLE:
 res$tmlePsi
@@ -119,19 +119,60 @@ res$iptwPsi
 
 ##2. Context-specific causal effect of multiple time point interventions
 
-In this section we extend the methodology described in section 1 to cover multiple time point interventions. We define: $$O(t) = (A(t,0), L(t,1), A(t,1), L(t,2), \dots, L(t,K), A(t,K), L(t,K+1))$$ to be an ordered longitudinal structure within time point $t$. We note that $A(t,j)$ is an intervention node (treatment/censoring) and $L(t,j+1)$ is a vector of subsequent time-dependent covariates and outcomes at time $j$ within $t$, for $t = 1, \dots, N$. The blocks $O(t)$ could have been artificially created for the purpose of estimation of a particular causal effect, but it could also be the case that we truly observe a unique experiment over a time block $t$ in which the treatment and covariate nodes have a special meaning. For example, the measurements in $O(t)$ might correspond to a sequence of unique actions and measurments on a day/cycle/period $t$, so that only $A(t,j)$ and $L(t,j)$ across $t$ for a fixed $j$ are measuring the same $j$-specific variable at time $t$.
+In this section we extend the methodology described in section 1 to cover multiple time point interventions. We define: $$O(t) = (A(t,0), L(t,1), A(t,1), L(t,2), \dots, L(t,K), A(t,K), L(t,K+1))$$ to be an ordered longitudinal structure within time point $t$. We note that $A(t,j)$ is an intervention node (treatment/censoring) and $L(t,j+1)$ is a vector of subsequent time-dependent covariates and outcomes at time $j$ within $t$, for $t = 1, \dots, N$. The blocks $O(t)$ could have been artificially created for the purpose of estimation of a particular causal effect, but it could also be the case that we truly observe a unique experiment over a time block $t$ in which the treatment and covariate nodes have a special meaning. For example, the measurements in $O(t)$ might correspond to a sequence of unique actions and measurements on a day/cycle/period $t$, so that only $A(t,j)$ and $L(t,j)$ across $t$ for a fixed $j$ are measuring the same $j$-specific variable at time $t$.
 
-As before, we define fixed dimensional relevant histories for conditional densities of $A(t,j)$ and $L(t,j)$ as $C_l(t,j) = (L(t, 1: j-1), A(t, 1:j-1), c_o(t))$ and $C_a(t,j) = (L(t, 1: j), A(t, 1:j-1), c_o(t))$. Our time-series model assumes that $q_{t,j}$ is described by a common (in time $t$) $\bar{q}_j$, for $j = 1, \dots, K+1$. Further, we partiton the indices $\{1, \dots, K\}$ for the intervention nodes into two disjoint sets $\mathcal{A}_1$ and $\mathcal{A}_2$. We note that for $j \in \mathcal{A}_1$ the intervention mechanism $g_{t,j}$ for generating $A(t,j)$ is known for each $t$. For $j \in \mathcal{A}_2$, we assume that $g_{t,j}$ for generating $A(t,j)$ is described by a common (in time $t$) $\bar{g}_j$. With this in mind, we write the density of $p_{c_o(t)}$ as follows: $$p_{c_o(t),\bar{q},\bar{g}}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We define $\bar{g}^*$ as a user-supplied stochastic intervention. Therefore, for a given $\bar{g}^*=(\bar{g}^*_j : j=1, \dots, K)$ of conditional densities of $A(t,j)$ given a summary measure $C_a^*(t,j)$, we define the post-intervnetion distribution of $O(t)$ given $C_o(t)$ if $A(t,j)$ are subjected to the intervention $\bar{g}^*_j$, for $j = 1, \dots, K$: $$p_{c_o(t),\bar{q},\bar{g}^*}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g^*_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We note that the stochastic intervention choice $\bar{g}^*$ is itself a conditional distribution given $C_o(t)$. 
+As before, we define fixed dimensional relevant histories for conditional densities of $A(t,j)$ and $L(t,j)$ as $C_l(t,j) = (L(t, 1: j-1), A(t, 1:j-1), c_o(t))$ and $C_a(t,j) = (L(t, 1: j), A(t, 1:j-1), c_o(t))$. Our time-series model assumes that $q_{t,j}$ is described by a common (in time $t$) $\bar{q}_j$, for $j = 1, \dots, K+1$. Further, we partition the indices $\{1, \dots, K\}$ for the intervention nodes into two disjoint sets $\mathcal{A}_1$ and $\mathcal{A}_2$. We note that for $j \in \mathcal{A}_1$ the intervention mechanism $g_{t,j}$ for generating $A(t,j)$ is known for each $t$. For $j \in \mathcal{A}_2$, we assume that $g_{t,j}$ for generating $A(t,j)$ is described by a common (in time $t$) $\bar{g}_j$. With this in mind, we write the density of $p_{c_o(t)}$ as follows: $$p_{c_o(t),\bar{q},\bar{g}}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We define $\bar{g}^*$ as a user-supplied stochastic intervention. Therefore, for a given $\bar{g}^*=(\bar{g}^*_j : j=1, \dots, K)$ of conditional densities of $A(t,j)$ given a summary measure $C_a^*(t,j)$, we define the post-intervention distribution of $O(t)$ given $C_o(t)$ if $A(t,j)$ are subjected to the intervention $\bar{g}^*_j$, for $j = 1, \dots, K$: $$p_{c_o(t),\bar{q},\bar{g}^*}(o(t)) = \prod_{j=1}^{K+1}\bar{q}_j(l(t,j) | c_l(t,j)) \prod_{j \in \mathcal{A}_1} g^*_{t,j}(a(t,j) | c_a(t,j)) \prod_{j \in \mathcal{A}_2} \bar{g}_j(a(t,j) | c_a(t,j))$$ We note that the stochastic intervention choice $\bar{g}^*$ is itself a conditional distribution given $C_o(t)$. 
 
-In conculsion, we define the $C_o(t)$-specific counterfactual mean under stochastic intervention. In particular, we define $Y(t)$ to be a real valued function of $L(t,K+1)$, which represents the outcome of interest for the $C_o(t)$-specific experiment. Let $Y_{\bar{g}^*}(t)$ be the random variable of $Y(t)$ under the post-intervention distribution $p_{C_o(t),\bar{q},\bar{g}^*}$. Therefore we have that our target parameter is: $$\Psi_{C_o(t)}(P_{C_o(t),\bar{q},\bar{g}}) = E_{P_{C_o(t),\bar{q},\bar{g}^*}} Y_{\bar{g}^*}(t)$$ 
+In conclusion, we define the $C_o(t)$-specific counterfactual mean under stochastic intervention. In particular, we define $Y(t)$ to be a real valued function of $L(t,K+1)$, which represents the outcome of interest for the $C_o(t)$-specific experiment. Let $Y_{\bar{g}^*}(t)$ be the random variable of $Y(t)$ under the post-intervention distribution $p_{C_o(t),\bar{q},\bar{g}^*}$. Therefore we have that our target parameter is: $$\Psi_{C_o(t)}(P_{C_o(t),\bar{q},\bar{g}}) = E_{P_{C_o(t),\bar{q},\bar{g}^*}} Y_{\bar{g}^*}(t)$$ 
 
+```{r MI, eval=FALSE}
+#Load relevant packages:
 
+#Load the data:
+data("sim_ts_s1")
+
+#Set library:
+Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+
+#Obtain estimates:
+res<-tstmleMI(sim_ts_s1, Co=5, block=2, V=10, Q_library, g_library)
+
+#TMLE:
+res$tmlePsi
+
+#IPTW:
+res$iptwPsi
+
+```
 
 ##3. Adaptive design learning the optimal individualized rule within a single time-series
 
+Finally, we consider the case where the parameter of interest is adaptive design learning the optimal individualized treatment rule within a single time series. As before, we have that our observed data is of the $O(t) = (A(t), Y(t), W(t))$ format with $t = 1, \dots, N$. We once again let $C_o(t)$ be a fixed dimensional summary measure of the observed past, $\bar{O}(t)$, and define $\bar{g}$ as the common conditional density of $A(t)$ given $C_o(t)$, $\bar{q}$ as the common conditional density of $Y(t)$ given $(A(t), C_o(t))$. For notational convenience, we let $Q(C_o(t), A(t)) = \mathbb{E}_{P_{C_o(t)}}(Y(t) | C_o(t), A(t))$. The following formulation allows for binary or continuous in $(0,1)$ $Y$. Finally, we put no restrictions on $\bar{Q}$, but $\{g}$ might be modeled or even know, as in sequential randomized setting. 
 
+Consider a treatment rule $C_o(t) \rightarrow d(C_o(t)) \in \{0,1\}$, that maps the history $C_o(t)$ into a treatment decision for $A(t)$. We define the following estimand: $$B_0(C_o(t)) = E_0(Y(t) | C_o(t), A(t) = 1) - E_0(Y(t) | C_o(t), A(t) = 0)$$ where the optimal rule for $A(t)$ for the purpose of minimizing $Y(t)$ is given by: $$d_0(C_o(t)) = I(B_0(C_o(t)) > 0)$$ `tstmle` estimates the optimal treatment rule based on machine learning. We note that if $B_t(C_o(t))$, an estimator of $B_o(C_o(t))$, is consistent, then the rule $d(C_o(t))$ will converge to the optimal rule $I(B_0(C_o(t)) > 0)$. 
 
+We are interested in the $C_o(t)$-specific conditional counterfactual mean under treatment rule. At each time $t$, we can define the target parameter as: $$\Psi_{C_o(t)}(P_{C_o(t)}) = \mathbb{E}_{P_{C_o(t)}}(Y(t) | C_o(t), A(t) = d(C_o(t)))$$ the conditional mean outcome $Y(t)$ if we would set treatment equal to the treatment decision $d(C_o(t))$. In particular, we are interested in the average of $C_o(t)$-specific counterfactual means under treatment rule: $$\frac{1}{N} \sum_t \Psi_{C_o(t)}(\bar{Q})$$
 
+Finally, `tstmle` implements the important case that the treatment assignment is controlled by the experimentalist. Therefore, we assign $A(t) = d(C_o(t))$ so that one assigns treatment decisions according to the best estimate of the optimal treatment rule with high probability based on the current history.
+
+```{r OPT, eval=FALSE}
+
+#Load the data:
+data("sim_ts_s1")
+
+#Set libraries:
+Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
+blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
+
+#Obtain estimates:
+res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library, blip_library)
+
+#TMLE:
+res$tmlePsi
+
+```
 
 ## Session Information
 
