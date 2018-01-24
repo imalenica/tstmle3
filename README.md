@@ -185,4 +185,4 @@ References
 
 Malenica, Ivana, and Mark J van der Laan. 2018. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
 
-van der Laan, Mark J, and Ivana Malenica. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”
+Malenica, Ivana, and Mark J van der Laan. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”
