@@ -131,7 +131,7 @@ blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboo
 
 #Obtain estimates:
 res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, folds=NULL, stratifyAY = TRUE, 
-               V=5, Q_library, g_library, blip_library)
+               V=10, Q_library, g_library, blip_library)
 
 #TMLE:
 res$tmlePsi
