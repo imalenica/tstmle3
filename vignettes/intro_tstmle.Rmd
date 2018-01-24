@@ -61,7 +61,7 @@ if (!("tstmle" %in% installed.packages())) {
 
 Once the package is installed, we can load it using the following command:
 
-```{r load_pkg, eval=FALSE}
+```{r load_pkg, eval=TRUE}
 suppressMessages(library(tstmle))
 ```
 
@@ -71,7 +71,7 @@ suppressMessages(library(tstmle))
 
 Input data should be a single time-series of arbitrary size. The longer your provided time-series, better the estimation process, just like in the case of $N$ i.i.d. samples (alas, longer computational demand). The input should be $N$ by $1$ \code{data.frame} with row names indicating which node that particular time point belongs to: $W$, $A$, or $Y$. As mentioned in the previous section, $W$ are the set of covariates, $A$ intervention nodes, and $Y$ outcome. The imposed order must be $A$, $Y$, $W$, so that each time point will be a set of $(A,Y,W)$ for $i = 1, \dots, N$. Note that W can contain many different covariate nodes. For more details, see the example simulated dataset in the data directory. 
 
-```{r dataFormat, eval=FALSE}
+```{r dataFormat, eval=TRUE}
 data("sim_ts_s1")
 head(sim_ts_s1)
 
@@ -94,10 +94,14 @@ The final result of \code{tstmleSI} includes:
 
 - Relevant inference for the TMLE estimate, including the standard deviation, confidence interval, and the estimated influence function. 
 
-```{r SI, eval=FALSE}
+```{r SI, eval=TRUE}
 #Load relevant packages:
-library(sl3)
-library(origami)
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
+
+#set seed:
+set.seed(12)
 
 #Load the data:
 data("sim_ts_s1")
@@ -107,7 +111,7 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1, Cy=6, Ca=5, V=10, Q_library, g_library)
+res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, Cy=6, Ca=5, V=10, Q_library, g_library)
 
 #TMLE:
 res$tmlePsi
@@ -127,6 +131,12 @@ In conclusion, we define the $C_o(t)$-specific counterfactual mean under stochas
 
 ```{r MI, eval=FALSE}
 #Load relevant packages:
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
+
+#set seed:
+set.seed(12)
 
 #Load the data:
 data("sim_ts_s1")
@@ -148,7 +158,7 @@ res$iptwPsi
 
 ##3. Adaptive design learning the optimal individualized rule within a single time-series
 
-Finally, we consider the case where the parameter of interest is adaptive design learning the optimal individualized treatment rule within a single time series. As before, we have that our observed data is of the $O(t) = (A(t), Y(t), W(t))$ format with $t = 1, \dots, N$. We once again let $C_o(t)$ be a fixed dimensional summary measure of the observed past, $\bar{O}(t)$, and define $\bar{g}$ as the common conditional density of $A(t)$ given $C_o(t)$, $\bar{q}$ as the common conditional density of $Y(t)$ given $(A(t), C_o(t))$. For notational convenience, we let $Q(C_o(t), A(t)) = \mathbb{E}_{P_{C_o(t)}}(Y(t) | C_o(t), A(t))$. The following formulation allows for binary or continuous in $(0,1)$ $Y$. Finally, we put no restrictions on $\bar{Q}$, but $\{g}$ might be modeled or even know, as in sequential randomized setting. 
+Finally, we consider the case where the parameter of interest is adaptive design learning the optimal individualized treatment rule within a single time series. As before, we have that our observed data is of the $O(t) = (A(t), Y(t), W(t))$ format with $t = 1, \dots, N$. We once again let $C_o(t)$ be a fixed dimensional summary measure of the observed past, $\bar{O}(t)$, and define $\bar{g}$ as the common conditional density of $A(t)$ given $C_o(t)$, $\bar{q}$ as the common conditional density of $Y(t)$ given $(A(t), C_o(t))$. For notational convenience, we let $Q(C_o(t), A(t)) = \mathbb{E}_{P_{C_o(t)}}(Y(t) | C_o(t), A(t))$. The following formulation allows for binary or continuous in $(0,1)$ $Y$. Finally, we put no restrictions on $\bar{Q}$, but $\bar{g}$ might be modeled or even know, as in sequential randomized setting. 
 
 Consider a treatment rule $C_o(t) \rightarrow d(C_o(t)) \in \{0,1\}$, that maps the history $C_o(t)$ into a treatment decision for $A(t)$. We define the following estimand: $$B_0(C_o(t)) = E_0(Y(t) | C_o(t), A(t) = 1) - E_0(Y(t) | C_o(t), A(t) = 0)$$ where the optimal rule for $A(t)$ for the purpose of minimizing $Y(t)$ is given by: $$d_0(C_o(t)) = I(B_0(C_o(t)) > 0)$$ `tstmle` estimates the optimal treatment rule based on machine learning. We note that if $B_t(C_o(t))$, an estimator of $B_o(C_o(t))$, is consistent, then the rule $d(C_o(t))$ will converge to the optimal rule $I(B_0(C_o(t)) > 0)$. 
 
@@ -156,7 +166,14 @@ We are interested in the $C_o(t)$-specific conditional counterfactual mean under
 
 Finally, `tstmle` implements the important case that the treatment assignment is controlled by the experimentalist. Therefore, we assign $A(t) = d(C_o(t))$ so that one assigns treatment decisions according to the best estimate of the optimal treatment rule with high probability based on the current history.
 
-```{r OPT, eval=FALSE}
+```{r OPT, eval=TRUE}
+#Load relevant packages:
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
+
+#set seed:
+set.seed(21)
 
 #Load the data:
 data("sim_ts_s1")
@@ -166,8 +183,10 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
+folds<-NULL
+
 #Obtain estimates:
-res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library, blip_library)
+res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
 
 #TMLE:
 res$tmlePsi

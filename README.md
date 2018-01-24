@@ -70,13 +70,9 @@ In this section we utilize a simple, short data-set in order to estimate the cau
 
 ``` r
 #Load relevant packages:
-library(tstmle)
-#> Warning in as.POSIXlt.POSIXct(Sys.time()): unknown timezone 'zone/tz/2017c.
-#> 1.0/zoneinfo/America/Los_Angeles'
-library(sl3)
-library(origami)
-#> origami: Generalized Cross-Validation Framework
-#> Version: 0.8.2
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
 
 #set seed:
 set.seed(12)
@@ -89,8 +85,7 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, folds=NULL, 
-              Cy=6, Ca=5, V=10, Q_library, g_library)
+res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, Cy=6, Ca=5, V=10, Q_library, g_library)
 #> Fitting Q
 #> Fitting g
 #> Fitting Q(C_0,0)
@@ -99,11 +94,11 @@ res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, folds=NULL,
 #TMLE:
 res$tmlePsi
 #>       psi 
-#> 0.3140865
+#> 0.3141388
 
 #IPTW:
 res$iptwPsi
-#> [1] 0.314914
+#> [1] 0.3153326
 ```
 
 #### Adaptive design learning the optimal individualized treatment rule
@@ -112,8 +107,12 @@ Similarly to the last example, we again use the same short time-series data-set.
 
 ``` r
 #Load relevant packages:
-library(sl3)
-library(origami)
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
+
+#set seed:
+set.seed(10)
 
 #Load the data:
 data("sim_ts_s1")
@@ -123,11 +122,22 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
+folds<-NULL
+
 #Obtain estimates:
-res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library, blip_library)
+res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
+#> Fitting Q
+#> Fitting g
+#> Generating split-specific predictions
+#> Fitting the blip function
 
 #TMLE:
 res$tmlePsi
+#>              Psi
+#> A=0    0.4997637
+#> A=1    0.8023420
+#> A=A    0.6507463
+#> A=optA 0.8023420
 ```
 
 ------------------------------------------------------------------------
