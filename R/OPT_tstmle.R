@@ -85,25 +85,26 @@ tstmleOPT <- function(data,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TRUE,
   #Split-specific predictions:
   message("Generating split-specific predictions")
   estSplt<-estSplit(folds, Q, g, estQ, estg)
+  return(list(folds=folds,estSplt=estSplt,Q=Q,blip_library=blip_library))
 
   #Fit blip:
-  message("Fitting the blip function")
-  estBlp<-estBlip(folds, estSplt, Q, blip_library)
+  #message("Fitting the blip function")
+  #estBlp<-estBlip(folds=folds, estSplt=estSplt, Q=Q, blip_library=blip_library)
 
   #Run TMLE for all rules:
-  res <- with(estSplt$valSplit, {
-    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
-    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
-    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
-    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
-    list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
-  })
+  #res <- with(estSplt$valSplit, {
+  #  rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
+  #  rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
+  #  ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
+  #  ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
+  #  list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
+  #})
 
   #Extract psi for each rule:
-  res_fin<-extract_res(res)
+  #res_fin<-extract_res(res)
 
-  return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
-              IC=res_fin$IC,rule=res_fin$rule,steps=res_fin$steps,initialData=res_fin$initialData,
-              tmleData=res_fin$tmleData,all=res_fin$all))
+  #return(list(tmlePsi=res_fin$tmlePsi,tmleSD=res_fin$tmleSD,tmleCI=res_fin$tmleCI,
+  #            IC=res_fin$IC,rule=res_fin$rule,steps=res_fin$steps,initialData=res_fin$initialData,
+  #            tmleData=res_fin$tmleData,all=res_fin$all))
 
 }

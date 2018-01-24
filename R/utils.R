@@ -6,7 +6,6 @@
 #'
 #' @importFrom sl3 make_learner
 #'
-#' @export
 #
 
 make_stack <- function(learner_lists) {
@@ -93,7 +92,6 @@ bound <- function(x, bds){
 #' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
-#' @export
 #'
 
 extract_vals <- function(folds, split_preds) {
@@ -109,8 +107,6 @@ extract_vals <- function(folds, split_preds) {
 #'
 #' @param fold one fold from a list of folds.
 #' @param split_preds Cross-validated result of \code{cv_split}.
-#'
-#' @export
 #'
 
 extract_val <- function(fold, split_preds) {
@@ -162,6 +158,10 @@ estSplit<-function(folds, Q, g, estQ, estg){
 #' @param estSplt result object of \code{estSplit}.
 #' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
 #'
+#' @importFrom origami cross_validate
+#' @importFrom stats coef
+#' @importFrom nnls nnls
+#'
 #' @export
 #'
 
@@ -171,7 +171,7 @@ estBlip<-function(folds, estSplt, Q, blip_library){
 
   #Construct SL prediction of the blip:
   #For now, just use non-negative linear least squares.
-  x<-do.call(rbind, blipSplit$cvPred)
+  x<-do.call(rbind, estSplt$cvPred)
   y<-unlist(blipSplit$B)
 
   fit_coef <- stats::coef(nnls::nnls(as.matrix(x), as.matrix(y)))
@@ -249,7 +249,3 @@ extract_res<-function(res){
               tmleData=tmleData,all=all))
 
 }
-
-
-
-

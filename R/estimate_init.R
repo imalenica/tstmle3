@@ -417,6 +417,7 @@ cv_split <- function(fold, Q, g, estQ, estg){
 #' }
 #'
 #' @importFrom sl3 make_sl3_Task
+#' @importFrom origami fold_index
 #'
 #' @export
 #'
