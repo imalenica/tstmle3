@@ -5,6 +5,8 @@
 #' @param learner_lists list of algorithms, possibly with additional parameters.
 #'
 #' @importFrom sl3 make_learner
+#'
+#' @export
 #
 
 make_stack <- function(learner_lists) {
@@ -32,6 +34,8 @@ make_stack <- function(learner_lists) {
 #' @param SL.library list of \code{sl3} algorithms to be used for estimation.
 #'
 #' @importFrom sl3 make_learner Lrnr_sl
+#'
+#' @export
 #
 
 sl3.fit<-function(task,SL.library){
@@ -72,6 +76,8 @@ sl3.fit<-function(task,SL.library){
 #' @param x observed values of either Q or g.
 #' @param bds list containing the upper and lower bound for x.
 #'
+#' @export
+#'
 
 bound <- function(x, bds){
   x[x > max(bds)] <- max(bds)
@@ -87,6 +93,8 @@ bound <- function(x, bds){
 #' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
+#' @export
+#'
 
 extract_vals <- function(folds, split_preds) {
 
@@ -101,6 +109,8 @@ extract_vals <- function(folds, split_preds) {
 #'
 #' @param fold one fold from a list of folds.
 #' @param split_preds Cross-validated result of \code{cv_split}.
+#'
+#' @export
 #'
 
 extract_val <- function(fold, split_preds) {
@@ -130,6 +140,7 @@ extract_val <- function(fold, split_preds) {
 #' @param estQ Q result of \code{initEst} format.
 #' @param estg g result of \code{initEst} format.
 #'
+#' @export
 #
 
 estSplit<-function(folds, Q, g, estQ, estg){
@@ -151,6 +162,7 @@ estSplit<-function(folds, Q, g, estQ, estg){
 #' @param estSplt result object of \code{estSplit}.
 #' @param blip_library list of \code{sl3} algorithms for the fit of the blip function.
 #'
+#' @export
 #'
 
 estBlip<-function(folds, estSplt, Q, blip_library){
@@ -183,6 +195,8 @@ estBlip<-function(folds, estSplt, Q, blip_library){
 #' observed exposure, and learner optimal rule.
 #'
 #' @param res results from multiple calls to \code{ruletmle}.
+#'
+#' @export
 #'
 
 extract_res<-function(res){

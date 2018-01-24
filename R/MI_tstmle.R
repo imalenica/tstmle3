@@ -77,15 +77,6 @@ tstmleMI <- function(data,Co=NULL,block=1,folds=NULL,V=5,stratifyAY = TRUE,
 
 
 
-
-
-
-
-
-
-
-
-
     #Fit Q:
     message("Fitting Q")
     estQ<-initEst(Y=QY,X=QX,folds=folds,SL.library=Q_library)

@@ -70,23 +70,40 @@ In this section we utilize a simple, short data-set in order to estimate the cau
 
 ``` r
 #Load relevant packages:
+library(tstmle)
+#> Warning in as.POSIXlt.POSIXct(Sys.time()): unknown timezone 'zone/tz/2017c.
+#> 1.0/zoneinfo/America/Los_Angeles'
 library(sl3)
 library(origami)
+#> origami: Generalized Cross-Validation Framework
+#> Version: 0.8.2
+
+#set seed:
+set.seed(12)
 
 #Load the data:
-data("sim_ts_s1_n50")
+data("sim_ts_s1")
 
 #Set library:
 Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, folds=NULL, 
+              Cy=6, Ca=5, V=10, Q_library, g_library)
+#> Fitting Q
+#> Fitting g
+#> Fitting Q(C_0,0)
+#> Fitting Q(C_0,1)
 
 #TMLE:
 res$tmlePsi
+#>       psi 
+#> 0.3140865
+
 #IPTW:
 res$iptwPsi
+#> [1] 0.314914
 ```
 
 #### Adaptive design learning the optimal individualized treatment rule
@@ -99,7 +116,7 @@ library(sl3)
 library(origami)
 
 #Load the data:
-data("sim_ts_s1_n50")
+data("sim_ts_s1")
 
 #Set libraries:
 Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
@@ -107,7 +124,7 @@ g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
 #Obtain estimates:
-res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=3)
+res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library, blip_library)
 
 #TMLE:
 res$tmlePsi

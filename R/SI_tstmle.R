@@ -61,7 +61,7 @@ tstmleSI <- function(data,Co=TRUE,Cy=NULL,Ca=NULL,folds=NULL,V=5,stratifyAY = TR
                      gbounds=c(1e-4,1-1e-4), Qbounds=c(1e-4,1-1e-4), maxIter=1000,
                      fold_fn="folds_rolling_origin", window=1, skip=0){
 
-  if(Co){
+  if(Co==TRUE){
 
     ###########################################################
     # Estimation with sl3 and specified Cy and Ca dimensions.

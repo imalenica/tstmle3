@@ -83,10 +83,14 @@ intervention on a single time series, consider the following examples.
 In this section we utilize a simple, short data-set in order to estimate the causal effect of a 
 single time-point intervention on the next outcome. 
 
-```{r SI example, eval=FALSE}
+```{r SI example, eval=TRUE}
 #Load relevant packages:
-library(sl3)
-library(origami)
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
+
+#set seed:
+set.seed(12)
 
 #Load the data:
 data("sim_ts_s1")
@@ -96,10 +100,12 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 
 #Obtain estimates:
-res<-tstmleSI(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library)
+res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, folds=NULL, 
+              Cy=6, Ca=5, V=10, Q_library, g_library)
 
 #TMLE:
 res$tmlePsi
+
 #IPTW:
 res$iptwPsi
 
@@ -109,10 +115,11 @@ res$iptwPsi
 
 Similarly to the last example, we again use the same short time-series data-set. However, in this example we are interested in adaptive design learning the optimal individualized treatment rule within a single time-series. 
 
-```{r OPT example, eval=FALSE}
+```{r OPT example, eval=TRUE}
 #Load relevant packages:
-library(sl3)
-library(origami)
+suppressMessages(library(tstmle))
+suppressMessages(library(sl3))
+suppressMessages(library(origami))
 
 #Load the data:
 data("sim_ts_s1")
@@ -123,7 +130,8 @@ g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
 #Obtain estimates:
-res<-tstmleOPT(sim_ts_s1_n50, Cy=6, Ca=5, V=10, Q_library, g_library, blip_library)
+res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, folds=NULL, stratifyAY = TRUE, 
+               V=5, Q_library, g_library, blip_library)
 
 #TMLE:
 res$tmlePsi
