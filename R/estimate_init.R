@@ -119,10 +119,13 @@ initFrame <- function(data, Cy, Ca){
 
   }
 
-  names(Y)[2:ncol(Y)]<-name[Cy:1]
+  mY<-match(row.names(Y)[1],name)
+  mA<-match(row.names(A)[1],name)
+
+  names(Y)[2:ncol(Y)]<-name[(mY-1):(mY-Cy)]
   names(Y)[1:2]<-c("Y","A")
 
-  names(A)[2:ncol(A)]<-name[Ca:1]
+  names(A)[2:ncol(A)]<-name[(mA-1):(mA-Ca)]
   names(A)[1]<-c("A")
 
   row.names(Y)<-NULL
