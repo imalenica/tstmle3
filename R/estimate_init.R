@@ -25,7 +25,7 @@
 #' @export
 #
 
-initEst <- function(Y, X, folds=NULL,SL.library) {
+initEst <- function(Y, X, folds=NULL,SL.library, outcome_type="binary") {
 
   covars<-names(X)
   outcome<-names(Y)
@@ -34,7 +34,7 @@ initEst <- function(Y, X, folds=NULL,SL.library) {
   #Create sl3 task:
   #TO DO: add option for weights
   task <- sl3::make_sl3_Task(data, covariates = covars, outcome = outcome,
-                             outcome_type=NULL, folds=folds)
+                             outcome_type=outcome_type, folds=folds)
 
   #Return sl3 trained object:
   sl3_fit<-sl3.fit(task=task,SL.library=SL.library)
@@ -425,20 +425,21 @@ cv_split <- function(fold, Q, g, estQ, estg){
 #' @export
 #'
 
-cv_split_blip<-function(fold,estSplit,data,SL.library){
+cv_split_blip<-function(fold,estSplit,data,SL.library,outcome_type){
 
   v <- origami::fold_index()
 
   #Get the corresponding Blip for the fold v:
   B<-data.frame(B=estSplit$B[[v]])
+  folds<-estSplit$folds
 
-  res<-initEst(Y = B, X =  data[,-1], folds = folds, SL.library = SL.library)
+  res<-initEst(Y = B, X =  data[,-1], folds = folds, SL.library = SL.library, outcome_type=outcome_type)
 
   #Grab just the v fit prediction:
   valset<-data[fold$validation_set,]
 
   task<-sl3::make_sl3_Task(valset, covariates = names(valset[,-1]), outcome = names(valset[,1]),
-                           outcome_type=NULL, folds=fold)
+                           outcome_type=outcome_type, folds=fold)
 
   valset_res<-res$cvFit[[v]]$predict(task)
   row.names(valset_res)<-fold$validation_set

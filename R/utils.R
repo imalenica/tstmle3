@@ -143,6 +143,7 @@ estSplit<-function(folds, Q, g, estQ, estg){
 
   estSplit <- origami::cross_validate(cv_split, folds, Q, g, estQ, estg, .combine = F)
   estSplit$errors<-NULL
+  estSplit$folds<-folds
 
   estSplit_val<-extract_vals(folds, estSplit)
 
@@ -166,7 +167,8 @@ estSplit<-function(folds, Q, g, estQ, estg){
 
 estBlip<-function(folds, estSplt, Q, blip_library){
 
-  blipSplit<-origami::cross_validate(cv_split_blip, folds, estSplt$estSplit, Q, blip_library, .combine = F)
+  blipSplit<-origami::cross_validate(cv_split_blip, folds, estSplt$estSplit, Q, blip_library,
+                                     outcome_type = "continuous", .combine = F)
 
   #Construct SL prediction of the blip:
   #For now, just use non-negative linear least squares.
