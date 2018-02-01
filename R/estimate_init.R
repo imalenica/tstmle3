@@ -25,7 +25,7 @@
 #' @export
 #
 
-initEst <- function(Y, X, folds=NULL,SL.library, outcome_type="binary") {
+initEst <- function(Y, X, folds=NULL,SL.library, outcome_type="binomial") {
 
   covars<-names(X)
   outcome<-names(Y)

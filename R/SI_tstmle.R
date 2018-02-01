@@ -87,14 +87,16 @@ tstmleSI <- function(data,Co=TRUE,Cy=1,Ca=1,V=5,stratifyAY = TRUE,
       folds <- origami::make_folds(QY, V)
     }
 
+    #To do: automate Q and g outcome type sl3 not doing a good job
+
     #Fit Q:
     message("Fitting Q")
-    estQ<-initEst(Y=QY,X=QX,folds=folds,SL.library=Q_library)
+    estQ<-initEst(Y=QY,X=QX,folds=folds,SL.library=Q_library, outcome_type = "binomial")
     estQ$valY<-bound(estQ$valY, Qbounds)
 
     #Fit g:
     message("Fitting g")
-    estg<-initEst(Y=gY,X=gX,folds=folds,SL.library=g_library)
+    estg<-initEst(Y=gY,X=gX,folds=folds,SL.library=g_library, outcome_type = "binomial")
     estg$valY<-bound(estg$valY, gbounds)
 
     #Fit Q(C_0,0):
