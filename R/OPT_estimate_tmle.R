@@ -88,16 +88,16 @@ ruletmle<-function(obsA,obsY,pA1,Q0W,Q1W,ruleA,maxIter=1000,Qbounds=c(1e-4,1-1e-
 
   #Get samples that follow the rule
   #(1 for samples that follow the rule in the observed data)
-  A<-as.numeric(obsA==ruleA)
+  A<-as.numeric(unlist(obsA)==ruleA)
 
   #If rule is A=0, get p(A=0)
-  pA<-pA1*ruleA + (1-pA1)*(1-ruleA)
+  pA<-unlist(pA1)*ruleA + (1-unlist(pA1))*(1-ruleA)
 
   #Need E(Y|A=0,W) if rule is 0
-  Q<-Q1W*ruleA + Q0W*(1-ruleA)
+  Q<-unlist(Q1W)*ruleA + unlist(Q0W)*(1-ruleA)
 
   #Create appropriate data.frame and run tmle
-  tmledata<-data.frame(A=A, Y=obsY, gk=pA, Qk=Q)
+  tmledata<-data.frame(A=A, Y=unlist(obsY), gk=pA, Qk=Q)
   res<-tmleOPT(tmledata, maxIter, Qbounds)
 
   #Get inference:

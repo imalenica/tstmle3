@@ -4,7 +4,7 @@
 \alias{initEst}
 \title{Initial Estimation with sl3 and specified C_{o(t)} dimension}
 \usage{
-initEst(Y, X, folds = NULL, SL.library)
+initEst(Y, X, folds = NULL, SL.library, outcome_type = "binomial")
 }
 \arguments{
 \item{Y}{data.frame object containing the outcome variable.}

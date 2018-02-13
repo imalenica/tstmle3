@@ -4,7 +4,7 @@
 \alias{cv_split_blip}
 \title{Split-specific blip predictions}
 \usage{
-cv_split_blip(fold, estSplit, data, SL.library)
+cv_split_blip(fold, estSplit, data, SL.library, outcome_type)
 }
 \arguments{
 \item{fold}{one of the folds from the folds object.}

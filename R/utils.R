@@ -92,7 +92,7 @@ bound <- function(x, bds){
 #' @param folds user-specified list of folds. It should correspond to an element of \code{origami}.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
-#'
+#' @export
 
 extract_vals <- function(folds, split_preds) {
 
@@ -108,6 +108,7 @@ extract_vals <- function(folds, split_preds) {
 #' @param fold one fold from a list of folds.
 #' @param split_preds Cross-validated result of \code{cv_split}.
 #'
+#' @export
 
 extract_val <- function(fold, split_preds) {
 
@@ -122,6 +123,7 @@ extract_val <- function(fold, split_preds) {
   #Add index to it (aka, which sample is in question)
   val_preds <- as.data.frame(val_preds)
   val_preds$index <- valid_idx
+  val_preds$folds <- rep(v,nrow(val_preds))
   result <- list(preds = val_preds)
   return(result)
 }
@@ -139,6 +141,7 @@ extract_val <- function(fold, split_preds) {
 #' @export
 #
 
+#Why
 estSplit<-function(folds, Q, g, estQ, estg){
 
   estSplit <- origami::cross_validate(cv_split, folds, Q, g, estQ, estg, .combine = F)

@@ -78,60 +78,79 @@ initFrame <- function(data, Cy, Ca){
   step <- length(grep("_1$", row.names(data), value = TRUE))
   name<-row.names(data)
 
-  # Lag past
-  res_y <- lapply(seq_len(Cy), function(x) {
-    Hmisc::Lag(data[, 1], x)
-  })
-  res_a <- lapply(seq_len(Ca), function(x) {
-    Hmisc::Lag(data[, 1], x)
-  })
+  if(is.numeric(Cy) & is.numeric(Ca)){
 
-  res_y <- data.frame(matrix(unlist(res_y), nrow = length(res_y[[1]])),
-                    stringsAsFactors = FALSE)
-  res_a <- data.frame(matrix(unlist(res_a), nrow = length(res_a[[1]])),
-                      stringsAsFactors = FALSE)
+    # Lag past
+    res_y <- lapply(seq_len(Cy), function(x) {
+      Hmisc::Lag(data[, 1], x)
+    })
+    res_a <- lapply(seq_len(Ca), function(x) {
+      Hmisc::Lag(data[, 1], x)
+    })
 
-  data_full_y <- cbind.data.frame(data = data, res_y)
-  data_full_a <- cbind.data.frame(data = data, res_a)
+    res_y <- data.frame(matrix(unlist(res_y), nrow = length(res_y[[1]])),
+                        stringsAsFactors = FALSE)
+    res_a <- data.frame(matrix(unlist(res_a), nrow = length(res_a[[1]])),
+                        stringsAsFactors = FALSE)
 
-  #Start will depend on values of Cy and Ca.
-  #Keep only samples that have full history
-  cc <- stats::complete.cases(data_full_y)
-  data_full_y <- data_full_y[cc, ]
+    data_full_y <- cbind.data.frame(data = data, res_y)
+    data_full_a <- cbind.data.frame(data = data, res_a)
 
-  cc <- stats::complete.cases(data_full_a)
-  data_full_a <- data_full_a[cc, ]
+    #Start will depend on values of Cy and Ca.
+    #Keep only samples that have full history
+    cc <- stats::complete.cases(data_full_y)
+    data_full_y <- data_full_y[cc, ]
 
-  #Separate by process:
-  Y <- data_full_y[grep("Y", row.names(data_full_y), value = TRUE), ]
-  A <- data_full_a[grep("A", row.names(data_full_a), value = TRUE), ]
+    cc <- stats::complete.cases(data_full_a)
+    data_full_a <- data_full_a[cc, ]
 
-  #Shorten the longer one if not equal:
-  if(nrow(Y) != nrow(A)){
+    #Separate by process:
+    Y <- data_full_y[grep("Y", row.names(data_full_y), value = TRUE), ]
+    A <- data_full_a[grep("A", row.names(data_full_a), value = TRUE), ]
 
-    warning("Note that having different dimensions of Cy and Ca will result in a smaller n here.")
+    #Shorten the longer one if not equal:
+    if(nrow(Y) != nrow(A)){
 
-    if(nrow(Y) < nrow(A)){
-      A<-A[(nrow(A)-nrow(Y)+1):nrow(A),]
-    }else if(nrow(Y) > nrow(A)){
-      Y<-Y[(nrow(Y)-nrow(A)+1):nrow(Y),]
+      warning("Note that having different dimensions of Cy and Ca will result in a smaller n here.")
+
+      if(nrow(Y) < nrow(A)){
+        A<-A[(nrow(A)-nrow(Y)+1):nrow(A),]
+      }else if(nrow(Y) > nrow(A)){
+        Y<-Y[(nrow(Y)-nrow(A)+1):nrow(Y),]
+      }
+
     }
+
+    mY<-match(row.names(Y)[1],name)
+    mA<-match(row.names(A)[1],name)
+
+    names(Y)[2:ncol(Y)]<-name[(mY-1):(mY-Cy)]
+    names(Y)[1:2]<-c("Y","A")
+
+    names(A)[2:ncol(A)]<-name[(mA-1):(mA-Ca)]
+    names(A)[1]<-c("A")
+
+    row.names(Y)<-NULL
+    row.names(A)<-NULL
+
+    out <- list(Y = Y, A = A, Cy=Cy, Ca=Ca, data=data)
+  }else if(is.character(Cy) & is.character(Ca)){
+    #Get first Y and A in order
+    Y_start<-max(as.numeric(sub(".*_", "", Cy)))+1
+    A_start<-max(as.numeric(sub(".*_", "", Ca)))+1
+
+
+
+
+
+
+
+
+
 
   }
 
-  mY<-match(row.names(Y)[1],name)
-  mA<-match(row.names(A)[1],name)
 
-  names(Y)[2:ncol(Y)]<-name[(mY-1):(mY-Cy)]
-  names(Y)[1:2]<-c("Y","A")
-
-  names(A)[2:ncol(A)]<-name[(mA-1):(mA-Ca)]
-  names(A)[1]<-c("A")
-
-  row.names(Y)<-NULL
-  row.names(A)<-NULL
-
-  out <- list(Y = Y, A = A, Cy=Cy, Ca=Ca, data=data)
   return(out)
 
 }
