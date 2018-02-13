@@ -87,13 +87,15 @@ tstmleOPT <- function(data,Cy=1,Ca=1,V=5,stratifyAY = TRUE,
   estBlp<-estBlip(folds=folds, estSplt=estSplt, Q=Q, blip_library=blip_library)
 
   #Run TMLE for all rules:
-  res <- with(estSplt$valSplit, {
-    rule0 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=0)
-    rule1 <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=1)
-    ruleA <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=A)
-    ruleOpt <- ruletmle(A, Y, pA1, Q0W, Q1W, ruleA=estBlp$optA)
-    list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
-  })
+  rule0 <- ruletmle(estSplt$valSplit$A, estSplt$valSplit$Y, estSplt$valSplit$pA1,
+                      estSplt$valSplit$Q0W, estSplt$valSplit$Q1W, ruleA=0)
+  rule1 <- ruletmle(estSplt$valSplit$A, estSplt$valSplit$Y, estSplt$valSplit$pA1,
+                      estSplt$valSplit$Q0W, estSplt$valSplit$Q1W, ruleA=1)
+  ruleA <- ruletmle(estSplt$valSplit$A, estSplt$valSplit$Y, estSplt$valSplit$pA1,
+                      estSplt$valSplit$Q0W, estSplt$valSplit$Q1W, ruleA=unlist(estSplt$valSplit$A))
+  ruleOpt <- ruletmle(estSplt$valSplit$A, estSplt$valSplit$Y, estSplt$valSplit$pA1,
+                        estSplt$valSplit$Q0W, estSplt$valSplit$Q1W, ruleA=estBlp$optA)
+  res <- list(rule0=rule0,rule1=rule1,ruleA=ruleA,ruleOpt=ruleOpt)
 
   #Extract psi for each rule:
   res_fin<-extract_res(res)
