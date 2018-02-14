@@ -16,7 +16,7 @@ The `tstmle` package implements robust estimation and provides inference for dat
 
 Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables *O*(1),…*O*(*N*) where each *O*(*t*) with *t* ∈ {1, …, *N*} takes values in **R**<sup>*p*</sup>. Further, we assume that at each time *t*, we have a chronological order of the treatment or exposure *A*(*t*), outcome of interest *Y*(*t*), and possibly other covariates *W*(*t*). While studying time-series data, one might be interested in what the conditional mean of the outcome would have been had we intervened on one or more of the treatment nodes in the observed time-series. Additionally, one might also want to learn the optimal treatment rule for the single unit over time.
 
-The `tstmle` package focuses on a class of statistical target parameters defined as the average over time *t* of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series (van der Laan and Malenica 2018). In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
+The `tstmle` package focuses on a class of statistical target parameters defined as the average over time *t* of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series (Malenica and van der Laan 2018b). In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
 
 In particular, `tstmle` implements 3 different context-specific parameters:
 
@@ -26,7 +26,7 @@ In particular, `tstmle` implements 3 different context-specific parameters:
 
 3.  Adaptive design learning the optimal individualized rule within a single time-series.
 
-Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data (Malenica and van der Laan 2018).
+Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data (Malenica and van der Laan 2018a).
 
 ------------------------------------------------------------------------
 
@@ -94,11 +94,11 @@ res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, Cy=6, Ca=5, V=10, Q_library
 #TMLE:
 res$tmlePsi
 #>       psi 
-#> 0.3141388
+#> 0.3140648
 
 #IPTW:
 res$iptwPsi
-#> [1] 0.3153326
+#> [1] 0.3151818
 ```
 
 #### Adaptive design learning the optimal individualized treatment rule
@@ -122,8 +122,6 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
-folds<-NULL
-
 #Obtain estimates:
 res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
 #> Fitting Q
@@ -134,10 +132,10 @@ res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_libr
 #TMLE:
 res$tmlePsi
 #>              Psi
-#> A=0    0.4997637
-#> A=1    0.8023420
-#> A=A    0.6507463
-#> A=optA 0.8023420
+#> A=0    0.4985075
+#> A=1    0.8029215
+#> A=A    0.6511804
+#> A=optA 0.8029215
 ```
 
 ------------------------------------------------------------------------
@@ -183,6 +181,6 @@ The contents of this repository are distributed under the MIT license. See below
 References
 ----------
 
-Malenica, Ivana, and Mark J van der Laan. 2018. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
+Malenica, Ivana, and Mark J van der Laan. 2018a. “Oracle Inequality for Cross-Validation Estimator Selector for Dependent Time-Ordered Experiments.”
 
-Malenica, Ivana, and Mark J van der Laan. 2018. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”
+———. 2018b. “Robust Estimation of Data-Dependent Causal Effects Based on Observing a Single Time-Series.”

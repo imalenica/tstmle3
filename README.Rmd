@@ -131,8 +131,6 @@ Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","
 g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
 blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
 
-folds<-NULL
-
 #Obtain estimates:
 res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
 
