@@ -24,7 +24,7 @@ In particular, `tstmle` implements 3 different context-specific parameters:
 
 2.  Average over time of context-specific causal effect of multiple time point interventions.
 
-3.  Adaptive design learning the optimal individualized rule within a single time-series.
+3.  Optimal individualized rule within a single time-series.
 
 Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data (Malenica and van der Laan 2018a).
 
@@ -101,7 +101,7 @@ res$iptwPsi
 #> [1] 0.3151818
 ```
 
-#### Adaptive design learning the optimal individualized treatment rule
+#### Optimal individualized treatment rule
 
 Similarly to the last example, we again use the same short time-series data-set. However, in this example we are interested in adaptive design learning the optimal individualized treatment rule within a single time-series.
 
