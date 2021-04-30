@@ -7,7 +7,7 @@ R/`tstmle`
 
 > Data-adaptive Estimation and Inference for Causal Effects with a Single Time Series
 
-**Authors:** [Ivana Malenica](https://github.com/podTockom)
+**Authors:** [Ivana Malenica](https://github.com/imalenica)
 
 What's `tstmle`?
 ----------------
