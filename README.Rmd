@@ -15,10 +15,6 @@ knitr::opts_chunk$set(
 
 # R/`tstmle`
 
-[![Travis-CI Build Status](https://travis-ci.org/podTockom/tstmle.svg?branch=master)](https://travis-ci.org/podTockom/tstmle)
-[![AppVeyor Build  Status](https://ci.appveyor.com/api/projects/status/github/podTockom/tstmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/tstmle)
-[![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/tstmle/master.svg)](https://codecov.io/github/podTockom/tstmle?branch=master)
-[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Data-adaptive Estimation and Inference for Causal Effects with a Single Time Series
