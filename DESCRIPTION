@@ -1,24 +1,21 @@
-Package: tstmle
+Package: tstmle3
 Title: Data-adaptive Targeted Maximum Likelihood Estimation of Causal Effects of Interventions on Single Time Series
-Version: 0.0.1
+Version: 1.0.0
 Authors@R: c(
     person("Ivana", "Malenica", email = "imalenica@berkeley.edu",
            role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0002-7404-8088")),
     person("Mark", "van der Laan", email = "laan@berkeley.edu",
-           role = "aut")       
-  )
+           role = "aut"))
 Maintainer: Ivana Malenica <imalenica@berkeley.edu>  
-Description: This package provides data-adaptive estimation and inference using Targeted Maximum Likelihood Estimation (TMLE) in order to assess the causal effect of interventions on a single time-series. In particular, it implements two target parameters of the conditional distribution, indexed by the fixed-dimensional summary measure of the past up until the time point of interest.
-Depends: R (>= 3.2.0)
+Description: This package provides data-adaptive estimation and inference using Targeted Maximum Likelihood Estimation (TMLE) in order to assess the causal effect of interventions on a single time-series.
+Depends: R (>= 4.0.0)
 Imports:
     stats,
     origami,
     sl3,
-    Hmisc,
-    nnls,
-    PerformanceAnalytics,
-    xts,
-    plyr
+    tmle3,
+    R6,
+    uuid
 Suggests:
     testthat,
     knitr,
@@ -26,10 +23,9 @@ Suggests:
 Remotes:
     github::jeremyrcoyle/sl3
 License: MIT + file LICENSE
-URL: https://github.com/podTockom/tstmle
-BugReports: https://github.com/podTockom/tstmle/issues
+URL: https://github.com/imalenica/tstmle3
+BugReports: https://github.com/imalenica/tstmle3/issues
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1.9000
-
+RoxygenNote: 7.2.0

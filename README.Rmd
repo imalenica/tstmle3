@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# R/`tstmle`
+# R/`tstmle3`
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -21,23 +21,21 @@ knitr::opts_chunk$set(
 
 __Authors:__ [Ivana Malenica](https://github.com/podTockom)
 
-## What's `tstmle`?
+## What's `tstmle3`?
 
-The `tstmle` package implements robust estimation and provides inference for data-dependent causal effects based observing a single time series.
+The `tstmle3` implements robust estimation and provides inference for data-dependent causal effects based observing a single time series. It's an adapter/extension R package in the `tlverse` ecosystem.
 
-Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables $O(1), \dots O(N)$ where each $O(t)$ with $t \in \{1, \dots ,N\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the treatment or exposure $A(t)$, outcome of interest $Y(t)$, and possibly other covariates $W(t)$. While studying time-series data, one might be interested in what the conditional mean of the outcome would have been had we intervened on one or more of the treatment nodes in the observed time-series. Additionally, one might also want to learn the optimal treatment rule for the single unit over time. 
+Consider the case where one observes a single time-series, denoted as a single sequence of dependent random variables $O(1), \dots O(N)$ where each $O(t)$ with $t \in \{1, \dots ,N\}$ takes values in $\mathbf{R}^p$. Further, we assume that at each time $t$, we have a chronological order of the treatment or exposure $A(t)$, outcome of interest $Y(t)$, and possibly other covariates $W(t)$. While studying time-series data, one might be interested in what the conditional mean of the outcome would have been had we intervened on one or more of the treatment nodes in the observed time-series. 
 
-The `tstmle` package focuses on a class of statistical target parameters defined as the average over time $t$ of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series [@c2]. In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
+The `tstmle3` package focuses on a class of statistical target parameters defined as the average over time $t$ of context-specific pathwise differentiable target parameters of the conditional distribution of the time-series [@c2]. In particular, it implements several context-specific causal parameters that can be estimated in a double robust manner and therefore fully utilize the sequential randomization.
 
-In particular, `tstmle` implements 3 different context-specific parameters:
+In particular, `tstmle3` implements few different context-specific parameters:
 
-1. Average over time of context-specific causal effect of a single time point intervention. 
+1. Average over time of context-specific ATE of a single time point intervention. 
 
-2. Average over time of context-specific causal effect of multiple time point interventions.
+2. Average over time of context-specific TSM of a single time point intervention. 
 
-3. Adaptive design learning the optimal individualized rule within a single time-series.
-
-Here, initial estimation is based on the [sl3](https://github.com/jeremyrcoyle/sl3) package, which constructs ensemble models with proven optimality properties for time-series data [@c3].
+Here, initial estimation is based on the [sl3](https://github.com/tlverse/sl3) package, which constructs ensemble models with proven optimality properties for time-series data [@c3].
 
 ---
 
@@ -47,13 +45,14 @@ You can install a stable release of `tstmle` from GitHub via
 [`devtools`](https://www.rstudio.com/products/rpackages/devtools/) with:
 
 ```{r tstmle-installation, eval = FALSE}
-devtools::install_github("podTockom/tstmle")
+devtools::install_github("imalenica/tstmle3")
 ```
 
-Note that in order to run `tstmle` you will also need `sl3`:
+Note that in order to run `tstmle` you will also need `sl3` and `tmle3`:
 
 ```{r sl3-installation, eval = FALSE}
-devtools::install_github("jeremyrcoyle/sl3")
+devtools::install_github("tlverse/sl3")
+devtools::install_github("tlverse/tmle3")
 ```
 
 <!--
@@ -69,91 +68,40 @@ install.packages("tstmle")
 
 ---
 
-## Examples
-
-To illustrate how `tstmle` may be used to ascertain the effect of an
-intervention on a single time series, consider the following examples.
-
-#### Context-specific causal effect of single-time point intervention
-
-In this section we utilize a simple, short data-set in order to estimate the causal effect of a 
-single time-point intervention on the next outcome. 
-
-```{r SI example, eval=TRUE}
-#Load relevant packages:
-suppressMessages(library(tstmle))
-suppressMessages(library(sl3))
-suppressMessages(library(origami))
-
-#set seed:
-set.seed(12)
-
-#Load the data:
-data("sim_ts_s1")
-
-#Set library:
-Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
-g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
-
-#Obtain estimates:
-res<-tstmleSI(sim_ts_s1, Co=TRUE, stratifyAY = TRUE, Cy=6, Ca=5, V=10, Q_library, g_library)
-
-#TMLE:
-res$tmlePsi
-
-#IPTW:
-res$iptwPsi
-
-```
-
-#### Adaptive design learning the optimal individualized treatment rule
-
-Similarly to the last example, we again use the same short time-series data-set. However, in this example we are interested in adaptive design learning the optimal individualized treatment rule within a single time-series. 
-
-```{r OPT example, eval=TRUE}
-#Load relevant packages:
-suppressMessages(library(tstmle))
-suppressMessages(library(sl3))
-suppressMessages(library(origami))
-
-#set seed:
-set.seed(10)
-
-#Load the data:
-data("sim_ts_s1")
-
-#Set libraries:
-Q_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
-g_library=list("Lrnr_mean", "Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost")
-blip_library=list("Lrnr_glm_fast", "Lrnr_glmnet","Lrnr_randomForest","Lrnr_xgboost", "Lrnr_nnls")
-
-#Obtain estimates:
-res<-tstmleOPT(sim_ts_s1, Cy=6, Ca=5, stratifyAY = TRUE, V=10, Q_library, g_library, blip_library)
-
-#TMLE:
-res$tmlePsi
-
-```
-
----
-
 ## Issues
 
 If you encounter any bugs or have any specific feature requests, please [file an
-issue](https://github.com/podTockom/tstmle/issues).
+issue](https://github.com/imalenica/tstmle3/issues).
 
 ---
 
+## Citation 
+
+After using the tstmle3 R package, please cite the following:
+
+```{r citation, eval=FALSE}
+
+@software{malenica2022tstmle3,
+      author = {Malenica, Ivana and {van der Laan}, Mark J},
+      title = {{tstmle3}: Context-Specific Targeted Learning for time-series},
+      year  = {2022},
+      doi = {},
+      url = {https://github.com/imalenica/tstmle3},
+      note = {R package version 1.0.0}
+    }
+```
+
+
 ## License
 
-&copy; 2018 [Ivana Malenica](https://github.com/podTockom)
+&copy; 2022 [Ivana Malenica](https://github.com/imalenica)
 
 The contents of this repository are distributed under the MIT license. See
 below for details:
 ```
 The MIT License (MIT)
 
-Copyright (c) 2017-2018
+Copyright (c) 2022-2023
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
